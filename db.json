@@ -1,0 +1,9 @@
+{
+  "members": [
+    { "id": 1, "clan": 1, "nick": "JogadorA", "level": 100 },
+    { "id": 2, "clan": 2, "nick": "JogadorB", "level": 80 }
+  ],
+  "events": [],
+  "deliveries": [],
+  "repo_items": []
+}
