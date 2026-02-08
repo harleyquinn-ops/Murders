@@ -254,7 +254,7 @@
     .main { margin-left: 0; }
   }
   </style>
-  <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/supabase.js"></script>
+ <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/index.global.min.js"></script>
 </head>
 <body>
   <div class="sidebar">
@@ -585,7 +585,8 @@
     const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
 
-    const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); /* [web:44] */
+   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* [web:44] */
 
     let state = {
       clan: 1,
