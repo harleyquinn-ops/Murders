@@ -247,8 +247,8 @@
   <script>
     const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
-    
-    let supabase = null;
+
+    let supabaseClient = null;
     const state = { clan: 1, members: {1: [], 2: []}, events: {1: [], 2: []}, deliveries: {1: [], 2: []}, repoItems: {1: [], 2: []} };
 
     function showMessage(msg, type = 'success') {
@@ -262,9 +262,14 @@
     function toBRDayMonthFromISO(d) { if (!d) return ''; const da = new Date(d); const di = String(da.getDate()).padStart(2,'0'); const me = String(da.getMonth()+1).padStart(2,'0'); return `${di}/${me}`; }
     function todayBR() { const n = new Date(); return `${String(n.getDate()).padStart(2,'0')}/${String(n.getMonth()+1).padStart(2,'0')}/${n.getFullYear()}`; }
 
-    function setClan(c) { state.clan = c; document.querySelectorAll('.clan-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.clan) === c)); document.getElementById('clanDisplay').textContent = c; loadAll(); }
+    function setClanFn(c) {
+      state.clan = c;
+      document.querySelectorAll('.clan-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.clan) === c));
+      document.getElementById('clanDisplay').textContent = c;
+      loadAll();
+    }
 
-    function switchTab(t) {
+    function switchTabFn(t) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
       document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
       const ti = {members: {icon:'👥',text:'Membros'}, events: {icon:'📊',text:'Presença'}, deliveries: {icon:'📦',text:'Entregas'}, repo: {icon:'📂',text:'Repositório'}, reports: {icon:'📈',text:'Relatórios'}, settings: {icon:'⚙️',text:'Configurações'}};
@@ -272,21 +277,26 @@
       document.getElementById('pageTitle').innerHTML = `<span id="pageIcon">${in_fo.icon}</span> ${in_fo.text} do clã`;
     }
 
-    function toggleTheme() { const cu = document.body.dataset.theme || 'light'; const ne = cu === 'light' ? 'dark' : 'light'; document.body.dataset.theme = ne; document.body.style.background = ne === 'dark' ? '#0f172a' : '#f1f5f9'; }
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function toggleThemeFn() {
+      const cu = document.body.dataset.theme || 'light';
+      const ne = cu === 'light' ? 'dark' : 'light';
+      document.body.dataset.theme = ne;
+      document.body.style.background = ne === 'dark' ? '#0f172a' : '#f1f5f9';
+    }
+    function openModalFn(id) { document.getElementById(id).classList.add('active'); }
+    function closeModalFn(id) { document.getElementById(id).classList.remove('active'); }
 
     async function initDB() {
       if (!window.supabase) { setTimeout(initDB, 100); return; }
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); [web:5]
       loadAll();
     }
 
-    async function loadAll() { if (!supabase) return; await loadMembers(); await loadEvents(); await loadDeliveries(); await loadRepo(); }
-    async function loadMembers() { const {data} = await supabase.from('members').select('*').eq('clan', state.clan).order('nick'); state.members[state.clan] = data || []; renderMembers(); }
-    async function loadEvents() { const {data} = await supabase.from('events').select('*').eq('clan', state.clan).order('data'); state.events[state.clan] = data || []; renderEvents(); }
-    async function loadDeliveries() { const {data} = await supabase.from('deliveries').select('*').eq('clan', state.clan).order('data'); state.deliveries[state.clan] = data || []; renderDeliveries(); }
-    async function loadRepo() { const {data} = await supabase.from('repo_items').select('*').eq('clan', state.clan).order('item'); state.repoItems[state.clan] = data || []; renderRepo(); }
+    async function loadAll() { if (!supabaseClient) return; await loadMembers(); await loadEvents(); await loadDeliveries(); await loadRepo(); }
+    async function loadMembers() { const {data} = await supabaseClient.from('members').select('*').eq('clan', state.clan).order('nick'); state.members[state.clan] = data || []; renderMembers(); }
+    async function loadEvents() { const {data} = await supabaseClient.from('events').select('*').eq('clan', state.clan).order('data'); state.events[state.clan] = data || []; renderEvents(); }
+    async function loadDeliveries() { const {data} = await supabaseClient.from('deliveries').select('*').eq('clan', state.clan).order('data'); state.deliveries[state.clan] = data || []; renderDeliveries(); }
+    async function loadRepo() { const {data} = await supabaseClient.from('repo_items').select('*').eq('clan', state.clan).order('item'); state.repoItems[state.clan] = data || []; renderRepo(); }
 
     function renderMembers() {
       const b = document.getElementById('members-body');
@@ -303,7 +313,7 @@
     function fillDeliveryNickOptions() { const s = document.getElementById('delivery-nick'); s.innerHTML = '<option></option>' + (state.members[state.clan] || []).map(m => `<option>${m.nick}</option>`).join(''); }
     function fillDeliveryItemOptions() { const l = document.getElementById('delivery-items'); l.innerHTML = (state.repoItems[state.clan] || []).map(r => `<option value="${r.item}"></option>`).join(''); }
 
-    function openMemberModal(i = null) {
+    function openMemberModalFn(i = null) {
       document.getElementById('member-index').value = i !== null ? i : '';
       if (i !== null && i !== '') {
         const m = state.members[state.clan][i];
@@ -319,10 +329,10 @@
         document.getElementById('member-class').value = 'Arqueira';
         document.getElementById('member-date').value = todayBR();
       }
-      openModal('member-modal');
+      openModalFn('member-modal');
     }
 
-    async function saveMember() {
+    async function saveMemberFn() {
       const i = document.getElementById('member-index').value;
       const n = document.getElementById('member-nick').value.trim();
       if (!n) { showMessage('❌ Nick obrigatório', 'error'); return; }
@@ -332,16 +342,16 @@
       try {
         const li = state.members[state.clan] || [];
         if (i !== '') {
-          const {data, error} = await supabase.from('members').update(r).eq('id', li[i].id).select().single();
+          const {data, error} = await supabaseClient.from('members').update(r).eq('id', li[i].id).select().single();
           if (error) throw error;
           li[i] = data;
         } else {
-          const {data, error} = await supabase.from('members').insert(r).select().single();
+          const {data, error} = await supabaseClient.from('members').insert(r).select().single();
           if (error) throw error;
           li.push(data);
         }
         state.members[state.clan] = li;
-        closeModal('member-modal');
+        closeModalFn('member-modal');
         renderMembers();
         fillEventNickOptions();
         fillDeliveryNickOptions();
@@ -349,11 +359,11 @@
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function deleteMember(i) {
+    async function deleteMemberFn(i) {
       const m = state.members[state.clan][i];
       if (!confirm(`Excluir ${m.nick}?`)) return;
       try {
-        await supabase.from('members').delete().eq('id', m.id);
+        await supabaseClient.from('members').delete().eq('id', m.id);
         state.members[state.clan].splice(i, 1);
         renderMembers();
         fillEventNickOptions();
@@ -362,10 +372,10 @@
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function clearAllMembers() {
+    async function clearAllMembersFn() {
       if (!confirm('Apagar TODOS?')) return;
       try {
-        await supabase.from('members').delete().eq('clan', state.clan);
+        await supabaseClient.from('members').delete().eq('clan', state.clan);
         state.members[state.clan] = [];
         renderMembers();
         fillEventNickOptions();
@@ -374,7 +384,7 @@
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    function openEventModal(i = null) {
+    function openEventModalFn(i = null) {
       fillEventNickOptions();
       document.getElementById('event-index').value = i != null ? i : '';
       if (i != null && i !== '') {
@@ -391,10 +401,10 @@
         document.getElementById('event-status').value = 'Presente';
         document.getElementById('event-just').value = '';
       }
-      openModal('event-modal');
+      openModalFn('event-modal');
     }
 
-    async function saveEvent() {
+    async function saveEventFn() {
       const n = document.getElementById('event-nick').value;
       if (!n) { showMessage('❌ Nick obrigatório', 'error'); return; }
       const i = document.getElementById('event-index').value;
@@ -402,35 +412,35 @@
       try {
         const li = state.events[state.clan] || [];
         if (i !== '') {
-          const {data, error} = await supabase.from('events').update(r).eq('id', li[i].id).select().single();
+          const {data, error} = await supabaseClient.from('events').update(r).eq('id', li[i].id).select().single();
           if (error) throw error;
           li[i] = data;
         } else {
-          const {data, error} = await supabase.from('events').insert(r).select().single();
+          const {data, error} = await supabaseClient.from('events').insert(r).select().single();
           if (error) throw error;
           li.push(data);
         }
         state.events[state.clan] = li;
-        closeModal('event-modal');
+        closeModalFn('event-modal');
         renderEvents();
         showMessage('✅ Salvo', 'success');
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function deleteEvent(i) {
+    async function deleteEventFn(i) {
       if (!confirm('Excluir?')) return;
       try {
-        await supabase.from('events').delete().eq('id', state.events[state.clan][i].id);
+        await supabaseClient.from('events').delete().eq('id', state.events[state.clan][i].id);
         state.events[state.clan].splice(i, 1);
         renderEvents();
         showMessage('✅ Excluído', 'success');
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function clearAllEvents() {
+    async function clearAllEventsFn() {
       if (!confirm('Apagar TODOS?')) return;
       try {
-        await supabase.from('events').delete().eq('clan', state.clan);
+        await supabaseClient.from('events').delete().eq('clan', state.clan);
         state.events[state.clan] = [];
         renderEvents();
         showMessage('✅ Apagado', 'success');
@@ -447,7 +457,7 @@
       b.innerHTML = li.map((e, i) => `<tr><td>${toBRDayMonthFromISO(e.data)}</td><td>${e.nick}</td><td>${e.evento}</td><td>${e.status}</td><td>${e.justificativa||''}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px" onclick="openEventModal(${i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px" onclick="deleteEvent(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
     }
 
-    function openDeliveryModal(i = null) {
+    function openDeliveryModalFn(i = null) {
       fillDeliveryNickOptions();
       fillDeliveryItemOptions();
       document.getElementById('delivery-index').value = i != null ? i : '';
@@ -467,10 +477,10 @@
         document.getElementById('delivery-qtd').value = 1;
         document.getElementById('delivery-obs').value = '';
       }
-      openModal('delivery-modal');
+      openModalFn('delivery-modal');
     }
 
-    async function saveDelivery() {
+    async function saveDeliveryFn() {
       const da = document.getElementById('delivery-date').value;
       const ni = document.getElementById('delivery-nick').value;
       const de = document.getElementById('delivery-desc').value.trim();
@@ -485,25 +495,25 @@
       try {
         const li = state.deliveries[state.clan] || [];
         if (i !== '') {
-          const {data, error} = await supabase.from('deliveries').update(r).eq('id', li[i].id).select().single();
+          const {data, error} = await supabaseClient.from('deliveries').update(r).eq('id', li[i].id).select().single();
           if (error) throw error;
           li[i] = data;
         } else {
-          const {data, error} = await supabase.from('deliveries').insert(r).select().single();
+          const {data, error} = await supabaseClient.from('deliveries').insert(r).select().single();
           if (error) throw error;
           li.push(data);
         }
         state.deliveries[state.clan] = li;
-        closeModal('delivery-modal');
+        closeModalFn('delivery-modal');
         renderDeliveries();
         showMessage('✅ Salvo', 'success');
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function deleteDelivery(i) {
+    async function deleteDeliveryFn(i) {
       if (!confirm('Excluir?')) return;
       try {
-        await supabase.from('deliveries').delete().eq('id', state.deliveries[state.clan][i].id);
+        await supabaseClient.from('deliveries').delete().eq('id', state.deliveries[state.clan][i].id);
         state.deliveries[state.clan].splice(i, 1);
         renderDeliveries();
         showMessage('✅ Excluído', 'success');
@@ -520,12 +530,13 @@
       b.innerHTML = li.map((d, i) => `<tr><td>${toBRDayMonthFromISO(d.data)}</td><td>${d.nick}</td><td>${d.classe}</td><td>${d.descricao}</td><td>${d.qtd||''}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openDeliveryModal(${i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteDelivery(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhuma</td></tr>';
     }
 
-    function showMonthlyReport() {
+    function showMonthlyReportFn() {
       const c = document.getElementById('monthly-report-card');
+      if (!c) return;
       c.style.display = c.style.display === 'none' ? 'block' : 'none';
     }
 
-    async function addRepoItem() {
+    async function addRepoItemFn() {
       const it = document.getElementById('repoItem').value.trim();
       const ti = document.getElementById('repoType').value.trim();
       const bo = document.getElementById('repoBoss').value.trim();
@@ -538,11 +549,11 @@
         const ex = re.find(r => r.item.toLowerCase() === it.toLowerCase());
         if (ex) {
           const nq = (ex.qtd || 0) + q;
-          const {data, error} = await supabase.from('repo_items').update({ qtd: nq, tipo: ti || ex.tipo, boss: bo || ex.boss }).eq('id', ex.id).select().single();
+          const {data, error} = await supabaseClient.from('repo_items').update({ qtd: nq, tipo: ti || ex.tipo, boss: bo || ex.boss }).eq('id', ex.id).select().single();
           if (error) throw error;
           Object.assign(ex, data);
         } else {
-          const {data, error} = await supabase.from('repo_items').insert({ clan: state.clan, item: it, tipo: ti, boss: bo, qtd: q }).select().single();
+          const {data, error} = await supabaseClient.from('repo_items').insert({ clan: state.clan, item: it, tipo: ti, boss: bo, qtd: q }).select().single();
           if (error) throw error;
           re.push(data);
         }
@@ -563,10 +574,10 @@
       b.innerHTML = re.map((r, i) => `<tr><td>${r.item}</td><td>${r.tipo||''}</td><td>${r.boss||''}</td><td>${r.qtd}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="removeRepoItem(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="5">Nenhum</td></tr>';
     }
 
-    async function removeRepoItem(i) {
+    async function removeRepoItemFn(i) {
       if (!confirm('Excluir?')) return;
       try {
-        await supabase.from('repo_items').delete().eq('id', state.repoItems[state.clan][i].id);
+        await supabaseClient.from('repo_items').delete().eq('id', state.repoItems[state.clan][i].id);
         state.repoItems[state.clan].splice(i, 1);
         renderRepo();
         fillDeliveryItemOptions();
@@ -574,12 +585,12 @@
       } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    function clickImportJSON() {
-      document.getElementById('json-file-input').onchange = handleJSONFile;
+    function clickImportJSONFn() {
+      document.getElementById('json-file-input').onchange = handleJSONFileFn;
       document.getElementById('json-file-input').click();
     }
 
-    async function handleJSONFile(e) {
+    async function handleJSONFileFn(e) {
       const f = e.target.files?.[0];
       if (!f) return;
       const r = new FileReader();
@@ -588,8 +599,8 @@
           const im = JSON.parse(ev.target.result);
           if (Array.isArray(im) && im[0]?.nick) {
             const li = im.map(m => ({ clan: state.clan, nick: m.nick, level: m.level ?? null, power: m.power ?? null, classe: m.classe ?? null, data: m.data ?? null }));
-            await supabase.from('members').delete().eq('clan', state.clan);
-            const {data, error} = await supabase.from('members').insert(li).select();
+            await supabaseClient.from('members').delete().eq('clan', state.clan);
+            const {data, error} = await supabaseClient.from('members').insert(li).select();
             if (error) throw error;
             state.members[state.clan] = data || [];
             renderMembers();
@@ -602,7 +613,7 @@
       r.readAsText(f);
     }
 
-    function exportJSON() {
+    function exportJSONFn() {
       const d = JSON.stringify(state, null, 2);
       const b = new Blob([d], { type: 'application/json' });
       const u = URL.createObjectURL(b);
@@ -613,6 +624,30 @@
       URL.revokeObjectURL(u);
       showMessage('✅ Exportado!', 'success');
     }
+
+    // Expor funções para o HTML (onclick)
+    window.setClan = setClanFn;
+    window.switchTab = switchTabFn;
+    window.toggleTheme = toggleThemeFn;
+    window.openModal = openModalFn;
+    window.closeModal = closeModalFn;
+    window.openMemberModal = openMemberModalFn;
+    window.saveMember = saveMemberFn;
+    window.deleteMember = deleteMemberFn;
+    window.clearAllMembers = clearAllMembersFn;
+    window.openEventModal = openEventModalFn;
+    window.saveEvent = saveEventFn;
+    window.deleteEvent = deleteEventFn;
+    window.clearAllEvents = clearAllEventsFn;
+    window.openDeliveryModal = openDeliveryModalFn;
+    window.saveDelivery = saveDeliveryFn;
+    window.deleteDelivery = deleteDeliveryFn;
+    window.showMonthlyReport = showMonthlyReportFn;
+    window.addRepoItem = addRepoItemFn;
+    window.removeRepoItem = removeRepoItemFn;
+    window.clickImportJSON = clickImportJSONFn;
+    window.handleJSONFile = handleJSONFileFn;
+    window.exportJSON = exportJSONFn;
 
     initDB();
   </script>
