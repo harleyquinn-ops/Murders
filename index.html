@@ -257,8 +257,16 @@
  <!-- SUPABASE PRIMEIRO -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- SEU SCRIPT DEPOIS -->
-<script src="script.js"></script>
+<script>
+  const { createClient } = supabase;
+
+  const supabaseClient = createClient(
+    "SUA_URL",
+    "SUA_ANON_KEY"
+  );
+</script>
+
+
 
 </head>
 <body>
