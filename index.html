@@ -584,29 +584,9 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
-
+    let SUPABASE_URL = '';
+    let SUPABASE_ANON_KEY = '';
     let supabase;
-
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!window.supabase) {
-        showMessage('❌ Supabase não carregou. Verifique conexão.', 'error');
-        return;
-      }
-
-      supabase = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY
-      );
-
-      if (!supabase) {
-        showMessage('❌ Falha ao iniciar Supabase', 'error');
-        return;
-      }
-
-      loadAll();
-    });
 
     let state = {
       clan: 1,
@@ -657,6 +637,7 @@
         btn.classList.toggle('active', Number(btn.dataset.clan) === clan);
       });
       document.getElementById('clanDisplay').textContent = clan;
+      loadAll();
     }
 
     function switchTab(tab) {
@@ -696,6 +677,33 @@
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
+    function initializeSupabase() {
+      if (!window.supabase) {
+        showMessage('❌ Supabase não carregou. Verifique conexão.', 'error');
+        return;
+      }
+
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      if (!supabase) {
+        showMessage('❌ Falha ao iniciar Supabase', 'error');
+        return;
+      }
+      loadAll();
+    }
+
+    async function loadConfig() {
+      try {
+        const response = await fetch('./config.json');
+        if (!response.ok) throw new Error('config.json não encontrado');
+        const config = await response.json();
+        SUPABASE_URL = config.SUPABASE_URL;
+        SUPABASE_ANON_KEY = config.SUPABASE_ANON_KEY;
+        initializeSupabase();
+      } catch (error) {
+        showMessage('❌ Erro: Coloque config.json na mesma pasta do HTML', 'error');
+      }
+    }
+
     async function loadAll() {
       if (!supabase) return;
       loadMembers();
@@ -705,52 +713,28 @@
     }
 
     async function loadMembers() {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('clan', state.clan)
-        .order('nick', { ascending: true });
-
-      if (error) {
-        console.error(error);
-        showMessage('❌ Erro ao carregar membros', 'error');
-        return;
-      }
+      const { data, error } = await supabase.from('members').select('*').eq('clan', state.clan).order('nick', { ascending: true });
+      if (error) { console.error(error); showMessage('❌ Erro ao carregar membros', 'error'); return; }
       state.members[state.clan] = data || [];
       renderMembers();
     }
 
     async function loadEvents() {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .eq('clan', state.clan)
-        .order('data', { ascending: true });
-
+      const { data, error } = await supabase.from('events').select('*').eq('clan', state.clan).order('data', { ascending: true });
       if (error) { console.error(error); return; }
       state.events[state.clan] = data || [];
       renderEvents();
     }
 
     async function loadDeliveries() {
-      const { data, error } = await supabase
-        .from('deliveries')
-        .select('*')
-        .eq('clan', state.clan)
-        .order('data', { ascending: true });
-
+      const { data, error } = await supabase.from('deliveries').select('*').eq('clan', state.clan).order('data', { ascending: true });
       if (error) { console.error(error); return; }
       state.deliveries[state.clan] = data || [];
       renderDeliveries();
     }
 
     async function loadRepo() {
-      const { data, error } = await supabase
-        .from('repo_items')
-        .select('*')
-        .eq('clan', state.clan)
-        .order('item', { ascending: true });
-
+      const { data, error } = await supabase.from('repo_items').select('*').eq('clan', state.clan).order('item', { ascending: true });
       if (error) { console.error(error); return; }
       state.repoItems[state.clan] = data || [];
       renderRepo();
@@ -761,14 +745,10 @@
       const all = state.members[state.clan] || [];
       const search = (document.getElementById('searchMembers')?.value || '').toLowerCase();
       const filterClass = document.getElementById('filterClass')?.value || '';
-
       let list = all.map((m, idx) => ({ ...m, _idx: idx }));
-
-      if (search)      list = list.filter(m => (m.nick || '').toLowerCase().includes(search));
+      if (search) list = list.filter(m => (m.nick || '').toLowerCase().includes(search));
       if (filterClass) list = list.filter(m => m.classe === filterClass);
-
       list.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR'));
-
       body.innerHTML = list.map(m => `
         <tr>
           <td>${m.nick}</td>
@@ -777,10 +757,8 @@
           <td>${m.classe ?? ''}</td>
           <td>${toBRDayMonthFromISO(m.data)}</td>
           <td>
-            <button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;"
-                    onclick="openMemberModal(${m._idx})">Editar</button>
-            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;"
-                    onclick="deleteMember(${m._idx})">Excluir</button>
+            <button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openMemberModal(${m._idx})">Editar</button>
+            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteMember(${m._idx})">Excluir</button>
           </td>
         </tr>
       `).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
@@ -789,31 +767,19 @@
     function fillEventNickOptions() {
       const select = document.getElementById('event-nick');
       if (!select) return;
-      select.innerHTML = '<option value=""></option>' +
-        (state.members[state.clan] || [])
-          .slice()
-          .sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR'))
-          .map(m => `<option>${m.nick}</option>`)
-          .join('');
+      select.innerHTML = '<option value=""></option>' + (state.members[state.clan] || []).slice().sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR')).map(m => `<option>${m.nick}</option>`).join('');
     }
 
     function fillDeliveryNickOptions() {
       const select = document.getElementById('delivery-nick');
       if (!select) return;
-      select.innerHTML = '<option value=""></option>' +
-        (state.members[state.clan] || [])
-          .slice()
-          .sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR'))
-          .map(m => `<option>${m.nick}</option>`)
-          .join('');
+      select.innerHTML = '<option value=""></option>' + (state.members[state.clan] || []).slice().sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR')).map(m => `<option>${m.nick}</option>`).join('');
     }
 
     function fillDeliveryItemOptions() {
       const listEl = document.getElementById('delivery-items');
       if (!listEl) return;
-      const items = (state.repoItems[state.clan] || [])
-        .slice()
-        .sort((a, b) => (a.item || '').localeCompare(b.item || '', 'pt-BR'));
+      const items = (state.repoItems[state.clan] || []).slice().sort((a, b) => (a.item || '').localeCompare(b.item || '', 'pt-BR'));
       listEl.innerHTML = items.map(r => `<option value="${r.item}"></option>`).join('');
     }
 
@@ -840,41 +806,19 @@
       const idx = document.getElementById('member-index').value;
       const nick = document.getElementById('member-nick').value.trim();
       if (!nick) { showMessage('❌ Nick obrigatório', 'error'); return; }
-
       const levelStr = document.getElementById('member-level').value.trim();
       const powerStr = document.getElementById('member-power').value.trim();
-
-      const record = {
-        clan: state.clan,
-        nick,
-        level: levelStr ? parseInt(levelStr, 10) : null,
-        power: powerStr ? parseInt(powerStr.replace(/\./g, ''), 10) : null,
-        classe: document.getElementById('member-class').value,
-        data: toISOFromBR(document.getElementById('member-date').value)
-      };
-
+      const record = { clan: state.clan, nick, level: levelStr ? parseInt(levelStr, 10) : null, power: powerStr ? parseInt(powerStr.replace(/\./g, ''), 10) : null, classe: document.getElementById('member-class').value, data: toISOFromBR(document.getElementById('member-date').value) };
       try {
         const list = state.members[state.clan] || [];
         if (idx !== '') {
           const existing = list[idx];
-          if (!existing || !existing.id) {
-            showMessage('❌ Registro sem id, recarregue', 'error');
-            return;
-          }
-          const { data, error } = await supabase
-            .from('members')
-            .update(record)
-            .eq('id', existing.id)
-            .select()
-            .single();
+          if (!existing || !existing.id) { showMessage('❌ Registro sem id', 'error'); return; }
+          const { data, error } = await supabase.from('members').update(record).eq('id', existing.id).select().single();
           if (error) throw error;
           list[idx] = data;
         } else {
-          const { data, error } = await supabase
-            .from('members')
-            .insert(record)
-            .select()
-            .single();
+          const { data, error } = await supabase.from('members').insert(record).select().single();
           if (error) throw error;
           list.push(data);
         }
@@ -894,15 +838,10 @@
       const list = state.members[state.clan] || [];
       const item = list[index];
       if (!item) { showMessage('❌ Membro não encontrado', 'error'); return; }
-
       if (!confirm(`Excluir membro ${item.nick}?`)) return;
-
       try {
         if (item.id) {
-          const { error } = await supabase
-            .from('members')
-            .delete()
-            .eq('id', item.id);
+          const { error } = await supabase.from('members').delete().eq('id', item.id);
           if (error) throw error;
         }
         list.splice(index, 1);
@@ -920,10 +859,7 @@
     async function clearAllMembers() {
       if (!confirm('Apagar TODOS os membros do clã atual?')) return;
       try {
-        const { error } = await supabase
-          .from('members')
-          .delete()
-          .eq('clan', state.clan);
+        const { error } = await supabase.from('members').delete().eq('clan', state.clan);
         if (error) throw error;
         state.members[state.clan] = [];
         renderMembers();
@@ -961,34 +897,16 @@
       const idx = document.getElementById('event-index').value;
       const nick = document.getElementById('event-nick').value;
       if (!nick) { showMessage('❌ Nick obrigatório', 'error'); return; }
-
-      const record = {
-        clan: state.clan,
-        data: toISOFromBR(document.getElementById('event-date').value),
-        evento: document.getElementById('event-name').value,
-        nick,
-        status: document.getElementById('event-status').value,
-        justificativa: document.getElementById('event-just').value
-      };
-
+      const record = { clan: state.clan, data: toISOFromBR(document.getElementById('event-date').value), evento: document.getElementById('event-name').value, nick, status: document.getElementById('event-status').value, justificativa: document.getElementById('event-just').value };
       const list = state.events[state.clan] || [];
       try {
         if (idx !== '') {
           const existing = list[idx];
-          const { data, error } = await supabase
-            .from('events')
-            .update(record)
-            .eq('id', existing.id)
-            .select()
-            .single();
+          const { data, error } = await supabase.from('events').update(record).eq('id', existing.id).select().single();
           if (error) throw error;
           list[idx] = data;
         } else {
-          const { data, error } = await supabase
-            .from('events')
-            .insert(record)
-            .select()
-            .single();
+          const { data, error } = await supabase.from('events').insert(record).select().single();
           if (error) throw error;
           list.push(data);
         }
@@ -1008,10 +926,7 @@
       if (!item) return;
       if (!confirm('Excluir este evento?')) return;
       try {
-        const { error } = await supabase
-          .from('events')
-          .delete()
-          .eq('id', item.id);
+        const { error } = await supabase.from('events').delete().eq('id', item.id);
         if (error) throw error;
         list.splice(index, 1);
         state.events[state.clan] = list;
@@ -1026,10 +941,7 @@
     async function clearAllEvents() {
       if (!confirm('Apagar TODOS os eventos do clã atual?')) return;
       try {
-        const { error } = await supabase
-          .from('events')
-          .delete()
-          .eq('clan', state.clan);
+        const { error } = await supabase.from('events').delete().eq('clan', state.clan);
         if (error) throw error;
         state.events[state.clan] = [];
         renderEvents();
@@ -1043,15 +955,11 @@
     function renderEvents() {
       const body = document.getElementById('events-body');
       let list = [...(state.events[state.clan] || [])];
-
-      const filterEvent  = document.getElementById('filterEvent')?.value || '';
+      const filterEvent = document.getElementById('filterEvent')?.value || '';
       const filterStatus = document.getElementById('filterStatus')?.value || '';
-
-      if (filterEvent)  list = list.filter(e => e.evento === filterEvent);
+      if (filterEvent) list = list.filter(e => e.evento === filterEvent);
       if (filterStatus) list = list.filter(e => e.status === filterStatus);
-
       list.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
-
       body.innerHTML = list.map((e, i) => `
         <tr>
           <td>${toBRDayMonthFromISO(e.data)}</td>
@@ -1071,7 +979,6 @@
       document.getElementById('delivery-index').value = index != null ? index : '';
       fillDeliveryNickOptions();
       fillDeliveryItemOptions();
-
       if (index != null && index !== '') {
         const d = state.deliveries[state.clan][index];
         document.getElementById('delivery-date').value = d.data ? toBRFromISO(d.data) : todayBR();
@@ -1088,85 +995,49 @@
         document.getElementById('delivery-qtd').value = 1;
         document.getElementById('delivery-obs').value = '';
       }
-
       openModal('delivery-modal');
     }
 
     async function saveDelivery() {
-      const idx   = document.getElementById('delivery-index').value;
-      const date  = document.getElementById('delivery-date').value;
-      const nick  = document.getElementById('delivery-nick').value;
+      const idx = document.getElementById('delivery-index').value;
+      const date = document.getElementById('delivery-date').value;
+      const nick = document.getElementById('delivery-nick').value;
       const classe = document.getElementById('delivery-class').value;
-      const desc  = document.getElementById('delivery-desc').value.trim();
+      const desc = document.getElementById('delivery-desc').value.trim();
       const qtdStr = document.getElementById('delivery-qtd').value;
-      const obs   = document.getElementById('delivery-obs').value.trim();
-
-      if (!date || !nick || !desc || !qtdStr) {
-        showMessage('❌ Data, Nick, Descrição e Quantidade são obrigatórios', 'error');
-        return;
-      }
-
+      const obs = document.getElementById('delivery-obs').value.trim();
+      if (!date || !nick || !desc || !qtdStr) { showMessage('❌ Data, Nick, Descrição e Quantidade são obrigatórios', 'error'); return; }
       const qtd = parseInt(qtdStr, 10);
-      if (isNaN(qtd) || qtd <= 0) {
-        showMessage('❌ Quantidade inválida', 'error');
-        return;
-      }
-
-      const record = {
-        clan: state.clan,
-        data: toISOFromBR(date),
-        nick,
-        classe,
-        descricao: desc,
-        qtd,
-        obs
-      };
-
+      if (isNaN(qtd) || qtd <= 0) { showMessage('❌ Quantidade inválida', 'error'); return; }
+      const record = { clan: state.clan, data: toISOFromBR(date), nick, classe, descricao: desc, qtd, obs };
       const list = state.deliveries[state.clan] || [];
       try {
         if (idx !== '') {
           const existing = list[idx];
-          const { data, error } = await supabase
-            .from('deliveries')
-            .update(record)
-            .eq('id', existing.id)
-            .select()
-            .single();
+          const { data, error } = await supabase.from('deliveries').update(record).eq('id', existing.id).select().single();
           if (error) throw error;
           list[idx] = data;
         } else {
-          const { data, error } = await supabase
-            .from('deliveries')
-            .insert(record)
-            .select()
-            .single();
+          const { data, error } = await supabase.from('deliveries').insert(record).select().single();
           if (error) throw error;
           list.push(data);
         }
-
         const repoList = state.repoItems[state.clan] || [];
         const repoIndex = repoList.findIndex(r => r.item === record.descricao);
         if (repoIndex !== -1) {
           repoList[repoIndex].qtd = (repoList[repoIndex].qtd || 0) - qtd;
           if (repoList[repoIndex].qtd <= 0) {
             const toDelete = repoList[repoIndex];
-            const { error: errDel } = await supabase
-              .from('repo_items')
-              .delete()
-              .eq('id', toDelete.id);
+            const { error: errDel } = await supabase.from('repo_items').delete().eq('id', toDelete.id);
             if (errDel) console.error(errDel);
             repoList.splice(repoIndex, 1);
           } else {
             const toUpdate = repoList[repoIndex];
-            const { error: errUp } = await supabase
-              .from('repo_items')
-              .update({ qtd: repoList[repoIndex].qtd })
-              .eq('id', toUpdate.id);
+            const { error: errUp } = await supabase.from('repo_items').update({ qtd: repoList[repoIndex].qtd }).eq('id', toUpdate.id);
             if (errUp) console.error(errUp);
           }
           state.repoItems[state.clan] = repoList;
         }
-
         state.deliveries[state.clan] = list;
         closeModal('delivery-modal');
         renderDeliveries();
@@ -1185,10 +1056,7 @@
       if (!item) return;
       if (!confirm('Excluir esta entrega?')) return;
       try {
-        const { error } = await supabase
-          .from('deliveries')
-          .delete()
-          .eq('id', item.id);
+        const { error } = await supabase.from('deliveries').delete().eq('id', item.id);
         if (error) throw error;
         list.splice(index, 1);
         state.deliveries[state.clan] = list;
@@ -1203,13 +1071,10 @@
     function renderDeliveries() {
       const body = document.getElementById('deliveries-body');
       let list = [...(state.deliveries[state.clan] || [])];
-
       const searchNick = (document.getElementById('searchDeliveriesNick')?.value || '').toLowerCase();
       const filterClass = document.getElementById('filterDeliveriesClass')?.value || '';
-
       if (searchNick) list = list.filter(d => (d.nick || '').toLowerCase().includes(searchNick));
       if (filterClass) list = list.filter(d => d.classe === filterClass);
-
       body.innerHTML = list.map((d, i) => `
         <tr>
           <td>${toBRDayMonthFromISO(d.data)}</td>
@@ -1228,18 +1093,13 @@
     function showMonthlyReport() {
       const card = document.getElementById('monthly-report-card');
       card.style.display = card.style.display === 'none' ? 'block' : 'none';
-      if (card.style.display === 'block') {
-        renderMonthlyReport();
-      }
+      if (card.style.display === 'block') { renderMonthlyReport(); }
     }
 
     function renderMonthlyReport() {
       const monthInput = document.getElementById('reportMonth').value;
       const body = document.getElementById('monthly-report-body');
-      if (!monthInput) {
-        body.innerHTML = '<tr><td colspan="2">Selecione um mês</td></tr>';
-        return;
-      }
+      if (!monthInput) { body.innerHTML = '<tr><td colspan="2">Selecione um mês</td></tr>'; return; }
       const [year, month] = monthInput.split('-');
       const deliveries = state.deliveries[state.clan] || [];
       const filtered = deliveries.filter(d => {
@@ -1247,18 +1107,15 @@
         const [y, m] = d.data.split('-');
         return y === year && m === month;
       });
-
       const byNick = {};
       filtered.forEach(d => {
         if (!byNick[d.nick]) byNick[d.nick] = [];
         byNick[d.nick].push(d);
       });
-
       const rows = Object.keys(byNick).sort().map(nick => {
         const resumo = byNick[nick].map(d => `${toBRDayMonthFromISO(d.data)} - ${d.descricao} (x${d.qtd || 1})`).join('<br>');
         return `<tr><td>${nick}</td><td>${resumo}</td></tr>`;
       });
-
       body.innerHTML = rows.join('') || '<tr><td colspan="2">Nenhuma entrega nesse mês</td></tr>';
     }
 
@@ -1266,46 +1123,26 @@
       const item = document.getElementById('repoItem').value.trim();
       const tipo = document.getElementById('repoType').value.trim();
       const boss = document.getElementById('repoBoss').value.trim();
-      const qtdStr  = document.getElementById('repoQuantity').value.trim();
-
-      if (!item || !qtdStr) {
-        showMessage('❌ Item e quantidade são obrigatórios!', 'error');
-        return;
-      }
-
+      const qtdStr = document.getElementById('repoQuantity').value.trim();
+      if (!item || !qtdStr) { showMessage('❌ Item e quantidade são obrigatórios!', 'error'); return; }
       const qtd = parseInt(qtdStr, 10);
-      if (isNaN(qtd) || qtd <= 0) {
-        showMessage('❌ Quantidade inválida!', 'error');
-        return;
-      }
-
+      if (isNaN(qtd) || qtd <= 0) { showMessage('❌ Quantidade inválida!', 'error'); return; }
       try {
         const repo = state.repoItems[state.clan] || [];
         const existing = repo.find(r => r.item.toLowerCase() === item.toLowerCase());
         if (existing) {
           const newQtd = (existing.qtd || 0) + qtd;
-          const { data, error } = await supabase
-            .from('repo_items')
-            .update({ qtd: newQtd, tipo: tipo || existing.tipo, boss: boss || existing.boss })
-            .eq('id', existing.id)
-            .select()
-            .single();
+          const { data, error } = await supabase.from('repo_items').update({ qtd: newQtd, tipo: tipo || existing.tipo, boss: boss || existing.boss }).eq('id', existing.id).select().single();
           if (error) throw error;
           Object.assign(existing, data);
         } else {
-          const { data, error } = await supabase
-            .from('repo_items')
-            .insert({ clan: state.clan, item, tipo, boss, qtd })
-            .select()
-            .single();
+          const { data, error } = await supabase.from('repo_items').insert({ clan: state.clan, item, tipo, boss, qtd }).select().single();
           if (error) throw error;
           repo.push(data);
         }
-
         state.repoItems[state.clan] = repo;
         renderRepo();
         fillDeliveryItemOptions();
-
         document.getElementById('repoItem').value = '';
         document.getElementById('repoType').value = '';
         document.getElementById('repoBoss').value = '';
@@ -1319,9 +1156,7 @@
 
     function renderRepo() {
       const body = document.getElementById('repo-body');
-      const repo = (state.repoItems[state.clan] || [])
-        .slice()
-        .sort((a, b) => (a.item || '').localeCompare(b.item || '', 'pt-BR'));
+      const repo = (state.repoItems[state.clan] || []).slice().sort((a, b) => (a.item || '').localeCompare(b.item || '', 'pt-BR'));
       body.innerHTML = repo.map((r, i) => `
         <tr>
           <td>${r.item}</td>
@@ -1341,10 +1176,7 @@
       if (!item) return;
       if (!confirm('Excluir este item do repositório?')) return;
       try {
-        const { error } = await supabase
-          .from('repo_items')
-          .delete()
-          .eq('id', item.id);
+        const { error } = await supabase.from('repo_items').delete().eq('id', item.id);
         if (error) throw error;
         repo.splice(index, 1);
         state.repoItems[state.clan] = repo;
@@ -1359,67 +1191,63 @@
 
     async function parsePastedRepo() {
       const raw = (document.getElementById('pasteRepoText').value || '').trim();
-      if (!raw) {
-        showMessage('❌ Cole o texto do repositório primeiro', 'error');
-        return;
-      }
-
-      const lines = raw.split('\n')
-        .map(l => l.trim())
-        .filter(l => l);
-
-      if (!lines.length) {
-        showMessage('❌ Não encontrei linhas válidas', 'error');
-        return;
-      }
-
+      if (!raw) { showMessage('❌ Cole o texto do repositório primeiro', 'error'); return; }
+      const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
+      if (!lines.length) { showMessage('❌ Não encontrei linhas válidas', 'error'); return; }
       const repo = [];
-
       for (const line of lines) {
         const matchMain = line.match(/^(.*?)(\d+)(Santuário da União.*)$/);
         if (!matchMain) continue;
-
         const nomeBruto = matchMain[1].trim();
         const qtd = parseInt(matchMain[2], 10) || 0;
         const origemData = matchMain[3].trim();
-
         const origemMatch = origemData.match(/^(.*?)(20\d{2}\.\d{2}\.\d{2}.*)$/);
         const origem = origemMatch ? origemMatch[1].trim() : origemData;
-
         if (!nomeBruto || !qtd) continue;
-
-        const existing = repo.find(r =>
-          r.item.toLowerCase() === nomeBruto.toLowerCase() &&
-          r.boss === origem
-        );
-        if (existing) {
-          existing.qtd += qtd;
-        } else {
-          repo.push({ item: nomeBruto, tipo: '', boss: origem, qtd });
-        }
+        const existing = repo.find(r => r.item.toLowerCase() === nomeBruto.toLowerCase() && r.boss === origem);
+        if (existing) { existing.qtd += qtd; } else { repo.push({ item: nomeBruto, tipo: '', boss: origem, qtd }); }
       }
-
-      if (!repo.length) {
-        showMessage('❌ Não consegui interpretar nenhum item', 'error');
-        return;
-      }
-
+      if (!repo.length) { showMessage('❌ Não consegui interpretar nenhum item', 'error'); return; }
       try {
-        const { error: delErr } = await supabase
-          .from('repo_items')
-          .delete()
-          .eq('clan', state.clan);
+        const { error: delErr } = await supabase.from('repo_items').delete().eq('clan', state.clan);
         if (delErr) console.error(delErr);
-
         const toInsert = repo.map(r => ({ clan: state.clan, ...r }));
-        const { data, error } = await supabase
-          .from('repo_items')
-          .insert(toInsert)
-          .select();
-
+        const { data, error } = await supabase.from('repo_items').insert(toInsert).select();
         if (error) throw error;
-
         state.repoItems[state.clan] = data || [];
         renderRepo();
         fillDeliveryItemOptions();
-        showMessage(`✅
+        showMessage(`✅ ${repo.length} itens carregados do texto!`, 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao salvar no repositório', 'error');
+      }
+    }
+
+    function clickImportJSON() {
+      document.getElementById('json-file-input').onchange = handleJSONFile;
+      document.getElementById('json-file-input').click();
+    }
+
+    async function handleJSONFile(evt) {
+      const file = evt.target.files && evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported) && imported.length > 0) {
+            if (imported[0].nick !== undefined && imported[0].nome === undefined) {
+              const list = imported.map(m => ({ clan: state.clan, nick: m.nick, level: m.level ?? null, power: m.power ?? null, classe: m.classe ?? null, data: m.data ?? null }));
+              const { error: delErr } = await supabase.from('members').delete().eq('clan', state.clan);
+              if (delErr) console.error(delErr);
+              const { data, error } = await supabase.from('members').insert(list).select();
+              if (error) throw error;
+              state.members[state.clan] = data || [];
+              renderMembers();
+              fillEventNickOptions();
+              fillDeliveryNickOptions();
+              showMessage(`✅ ${data.length} membros importados!`, 'success');
+              return;
+            }
+            if (imported[0].nome !== undefined && (importe
