@@ -681,43 +681,46 @@
     }
 
     async function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const saved = JSON.parse(raw);
-          if (saved.webhooks) state.webhooks = saved.webhooks;
-          if (saved.clan) state.clan = saved.clan;
-          if (saved.members) state.members = saved.members;
-          if (saved.events) state.events = saved.events;
-          if (saved.deliveries) state.deliveries = saved.deliveries;
-          if (saved.repoItems) state.repoItems = saved.repoItems;
-        }
-      } catch (e) {
-        console.error('Erro ao carregar localStorage:', e);
-      }
-
-      document.getElementById('clanDisplay').textContent = state.clan;
-      document.getElementById('webhookClanDisplay').textContent = state.clan;
-
-      if (state.webhooks && state.webhooks[state.clan]) {
-        document.getElementById('webhookUrl-members').value = state.webhooks[state.clan].members || '';
-        document.getElementById('webhookUrl-events').value = state.webhooks[state.clan].events || '';
-        document.getElementById('webhookUrl-deliveries').value = state.webhooks[state.clan].deliveries || '';
-        document.getElementById('webhookUrl-repo').value = state.webhooks[state.clan].repo || '';
-      }
-
-      await loadAllFromAPI();
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (saved.webhooks) state.webhooks = saved.webhooks;
+      if (saved.clan) state.clan = saved.clan;
+      if (saved.members) state.members = saved.members;
+      if (saved.events) state.events = saved.events;
+      if (saved.deliveries) state.deliveries = saved.deliveries;
+      if (saved.repoItems) state.repoItems = saved.repoItems;
     }
+  } catch (e) {
+    console.error('Erro ao carregar localStorage:', e);
+  }
 
-    async function loadAllFromAPI() {
-      await Promise.all([
-        loadMembersFromAPI(),
-      ]);
-      renderEvents();
-      renderDeliveries();
-      renderRepo();
-      fillDeliveryItemOptions();
-    }
+  document.getElementById('clanDisplay').textContent = state.clan;
+  document.getElementById('webhookClanDisplay').textContent = state.clan;
+
+  if (state.webhooks && state.webhooks[state.clan]) {
+    document.getElementById('webhookUrl-members').value = state.webhooks[state.clan].members || '';
+    document.getElementById('webhookUrl-events').value = state.webhooks[state.clan].events || '';
+    document.getElementById('webhookUrl-deliveries').value = state.webhooks[state.clan].deliveries || '';
+    document.getElementById('webhookUrl-repo').value = state.webhooks[state.clan].repo || '';
+  }
+
+  // <-- substituição mínima: protegemos a chamada à API contra erros de conexão
+  try {
+    await loadAllFromAPI();
+  } catch (err) {
+    console.error('Erro em loadAllFromAPI:', err);
+    // informa o usuário mas continua usando dados locais (localStorage)
+    showMessage('⚠️ API indisponível — usando dados locais', 'error');
+
+    // garante que as partes da UI que dependem desses dados sejam renderizadas mesmo com a API off
+    renderEvents();
+    renderDeliveries();
+    renderRepo();
+    fillDeliveryItemOptions();
+  }
+}
 
     async function loadMembersFromAPI() {
       try {
