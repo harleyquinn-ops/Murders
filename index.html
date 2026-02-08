@@ -581,32 +581,33 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
 
-   let supabase;
+    let supabase;
 
-window.addEventListener('DOMContentLoaded', () => {
-  if (!window.supabase) {
-    showMessage('❌ Supabase não carregou. Verifique conexão.', 'error');
-    return;
-  }
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.supabase) {
+        showMessage('❌ Supabase não carregou. Verifique conexão.', 'error');
+        return;
+      }
 
-  supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+      supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
 
-  if (!supabase) {
-    showMessage('❌ Falha ao iniciar Supabase', 'error');
-    return;
-  }
+      if (!supabase) {
+        showMessage('❌ Falha ao iniciar Supabase', 'error');
+        return;
+      }
 
-  loadAll();
-});
+      loadAll();
+    });
 
-    
     let state = {
       clan: 1,
       members: { 1: [], 2: [] },
@@ -656,7 +657,6 @@ window.addEventListener('DOMContentLoaded', () => {
         btn.classList.toggle('active', Number(btn.dataset.clan) === clan);
       });
       document.getElementById('clanDisplay').textContent = clan;
-      
     }
 
     function switchTab(tab) {
@@ -697,21 +697,19 @@ window.addEventListener('DOMContentLoaded', () => {
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
     async function loadAll() {
-  if (!supabase) return;
-
-  loadMembers();
-  loadEvents();
-  loadDeliveries();
-  loadRepo();
-}
-
+      if (!supabase) return;
+      loadMembers();
+      loadEvents();
+      loadDeliveries();
+      loadRepo();
+    }
 
     async function loadMembers() {
       const { data, error } = await supabase
         .from('members')
         .select('*')
         .eq('clan', state.clan)
-        .order('nick', { ascending: true }); /* [web:30][web:34] */
+        .order('nick', { ascending: true });
 
       if (error) {
         console.error(error);
@@ -719,6 +717,7 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
       }
       state.members[state.clan] = data || [];
+      renderMembers();
     }
 
     async function loadEvents() {
@@ -730,6 +729,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       if (error) { console.error(error); return; }
       state.events[state.clan] = data || [];
+      renderEvents();
     }
 
     async function loadDeliveries() {
@@ -741,6 +741,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       if (error) { console.error(error); return; }
       state.deliveries[state.clan] = data || [];
+      renderDeliveries();
     }
 
     async function loadRepo() {
@@ -752,6 +753,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       if (error) { console.error(error); return; }
       state.repoItems[state.clan] = data || [];
+      renderRepo();
     }
 
     function renderMembers() {
@@ -1420,125 +1422,4 @@ window.addEventListener('DOMContentLoaded', () => {
         state.repoItems[state.clan] = data || [];
         renderRepo();
         fillDeliveryItemOptions();
-        showMessage(`✅ ${repo.length} itens carregados do texto!`, 'success');
-      } catch (err) {
-        console.error(err);
-        showMessage('❌ Erro ao salvar no repositório', 'error');
-      }
-    }
-
-    function clickImportJSON() {
-      document.getElementById('json-file-input').onchange = handleJSONFile;
-      document.getElementById('json-file-input').click();
-    }
-
-    async function handleJSONFile(evt) {
-      const file = evt.target.files && evt.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async function(e) {
-        try {
-          const imported = JSON.parse(e.target.result);
-
-          if (Array.isArray(imported) && imported.length > 0) {
-            if (imported[0].nick !== undefined && imported[0].nome === undefined) {
-              const list = imported.map(m => ({
-                clan: state.clan,
-                nick: m.nick,
-                level: m.level ?? null,
-                power: m.power ?? null,
-                classe: m.classe ?? null,
-                data: m.data ?? null
-              }));
-              const { error: delErr } = await supabase
-                .from('members')
-                .delete()
-                .eq('clan', state.clan);
-              if (delErr) console.error(delErr);
-              const { data, error } = await supabase
-                .from('members')
-                .insert(list)
-                .select();
-              if (error) throw error;
-              state.members[state.clan] = data || [];
-              renderMembers();
-              fillEventNickOptions();
-              fillDeliveryNickOptions();
-              showMessage(`✅ ${data.length} membros importados!`, 'success');
-              return;
-            }
-
-            if (imported[0].nome !== undefined &&
-                (imported[0].quantidade !== undefined || imported[0].origem !== undefined)) {
-              const repoItems = imported.map(item => ({
-                clan: state.clan,
-                item: item.nome || '',
-                tipo: '',
-                boss: item.origem || '',
-                qtd: parseInt(item.quantidade) || 0
-              }));
-              const { error: delErr2 } = await supabase
-                .from('repo_items')
-                .delete()
-                .eq('clan', state.clan);
-              if (delErr2) console.error(delErr2);
-              const { data, error } = await supabase
-                .from('repo_items')
-                .insert(repoItems)
-                .select();
-              if (error) throw error;
-              state.repoItems[state.clan] = data || [];
-              renderRepo();
-              fillDeliveryItemOptions();
-              showMessage(`✅ ${data.length} itens importados!`, 'success');
-              return;
-            }
-          }
-
-          showMessage('❌ Formato de arquivo não reconhecido!', 'error');
-        } catch (err) {
-          console.error(err);
-          showMessage('❌ Erro ao ler arquivo: ' + err.message, 'error');
-        }
-      };
-      reader.readAsText(file, 'utf-8');
-    }
-
-    function exportJSON() {
-      const dataStr = JSON.stringify(state, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `murders-clan${state.clan}-${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showMessage('✅ Exportado (estado local)!', 'success');
-    }
-
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
-  const SUPABASE_ANON_KEY = 'SUA_ANON_KEY_AQUI';
-
-  let supabase;
-
-  window.addEventListener('DOMContentLoaded', () => {
-    if (!window.supabase) {
-      alert('Supabase não carregou');
-      return;
-    }
-
-    supabase = window.supabase.createClient(
-      const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
-    );
-
-    loadAll();
-  });
-</script>
-
-</body>
-</html>
+        showMessage(`✅
