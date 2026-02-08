@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Murders - Painel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Poppins, sans-serif;
+    background: #f1f5f9;
+    color: #020617;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 250px;
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar h2 { margin-bottom: 30px; font-weight: 600; }
+
+  .clan-btn {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    background: #1e293b;
+    color: white;
+    cursor: pointer;
+    border-radius: 999px;
+    font-family: Poppins, sans-serif;
+    font-weight: 500;
+  }
+  .clan-btn.active { background: #38bdf8; color: #020617; }
+  .clan-btn:hover { background: #0ea5e9; }
+
+  .sidebar hr { margin: 20px 0; border: none; border-top: 1px solid #1f2937; }
+
+  .tab-btn {
+    width: 100%;
+    padding: 10px 14px;
+    margin: 4px 0;
+    border: none;
+    background: transparent;
+    color: #e5e7eb;
+    cursor: pointer;
+    border-radius: 999px;
+    font-family: Poppins, sans-serif;
+    text-align: left;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn span.icon {
+    width: 22px;
+    text-align: center;
+  }
+  .tab-btn.active {
+    background: #38bdf8;
+    color: #020617;
+    font-weight: 600;
+  }
+  .tab-btn:hover {
+    background: #0ea5e9;
+    color: #020617;
+  }
+
+  .main {
+    margin-left: 250px;
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    background: #e2f3ff;
+  }
+
+  .header {
+    background: #ffffff;
+    padding: 18px 22px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
+    color: #020617;
+  }
+  .header h1 { font-size: 22px; color: #020617; display:flex; align-items:center; gap:8px; }
+  .header-sub {
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+    border: 1px solid #e5e7eb;
+    color: #020617;
+  }
+  .card h3 { color: #020617; margin-bottom: 8px; font-size: 15px; }
+  .card p { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
+
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+  .btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: Poppins, sans-serif;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: #38bdf8; color: #020617; }
+  .btn-primary:hover { background: #0ea5e9; transform: translateY(-1px); }
+  .btn-danger { background: #ef4444; color: white; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-secondary { background: #0f172a; color: #e5e7eb; }
+  .btn-secondary:hover { background: #1e293b; }
+
+  .input-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-end; }
+  .input, select, textarea {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    font-family: Poppins, sans-serif;
+    font-size: 12px;
+    background: #ffffff;
+    color: #020617;
+  }
+  .input { flex: 1; min-width: 150px; }
+  select { flex: 0.5; min-width: 120px; border-radius: 999px; }
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    border-radius: 18px;
+  }
+  .input::placeholder { color: #9ca3af; }
+
+  .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #e5e7eb; background:#ffffff; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; color:#020617; }
+  table thead { background: #eff6ff; position: sticky; top: 0; }
+  table th, table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  table th { font-weight: 600; color:#1e293b; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; }
+  table tbody tr:hover { background: #f9fafb; }
+
+  .modal {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15,23,42,0.35);
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  .modal.active {
+    display: flex !important;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 20px;
+  }
+  .modal-content {
+    background: #ffffff;
+    padding: 24px 22px;
+    border-radius: 18px;
+    width: 90%;
+    max-width: 480px;
+    margin-bottom: 20px;
+    box-shadow: 0 16px 40px rgba(15,23,42,0.18);
+    border: 1px solid #e5e7eb;
+    color:#020617;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .modal-header h2 { font-size: 17px; color: #020617; }
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #6b7280;
+  }
+  .close-btn:hover { color:#020617; }
+
+  .form-group { margin-bottom: 12px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    background:#ffffff;
+    color:#020617;
+  }
+  .form-group textarea { border-radius: 16px; }
+
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  .tab { display: none; }
+  .tab.active { display: block; }
+
+  .empty { text-align: center; color: #6b7280; padding: 20px; }
+
+  .success {
+    background: #ecfdf3;
+    color: #166534;
+    padding: 10px;
+    border-radius: 999px;
+    margin-bottom: 15px;
+    border:1px solid #bbf7d0;
+    font-size:12px;
+  }
+  .error {
+    background: #fef2f2;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 999px;
+    margin-bottom: 15px;
+    border:1px solid #fecaca;
+    font-size:12px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 100%; height: auto; position: relative; }
+    .main { margin-left: 0; }
+  }
+  </style>
+  <script src="https://unpkg.com/@supabase/supabase-js@2.48.0/dist/umd/supabase.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>⚔️ Murders</h2>
+    <button class="clan-btn active" onclick="setClan(1)" data-clan="1">Clan 1</button>
+    <button class="clan-btn" onclick="setClan(2)" data-clan="2">Clan 2</button>
+    <hr>
+    <button class="tab-btn active" onclick="switchTab('members')" data-tab="members">
+      <span class="icon">👥</span> Membros
+    </button>
+    <button class="tab-btn" onclick="switchTab('events')" data-tab="events">
+      <span class="icon">📊</span> Presença
+    </button>
+    <button class="tab-btn" onclick="switchTab('deliveries')" data-tab="deliveries">
+      <span class="icon">📦</span> Entregas
+    </button>
+    <button class="tab-btn" onclick="switchTab('repo')" data-tab="repo">
+      <span class="icon">📂</span> Repositório
+    </button>
+    <button class="tab-btn" onclick="switchTab('reports')" data-tab="reports">
+      <span class="icon">📈</span> Relatórios
+    </button>
+    <button class="tab-btn" onclick="switchTab('settings')" data-tab="settings">
+      <span class="icon">⚙️</span> Configurações
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1 id="pageTitle"><span id="pageIcon">👥</span> Membros do clã</h1>
+        <p class="header-sub">Clã <span id="clanDisplay">1</span> • Painel online compartilhado</p>
+      </div>
+      <button class="btn btn-secondary" onclick="toggleTheme()">🌙 Tema</button>
+    </div>
+
+    <div id="msgContainer"></div>
+
+    <!-- CONFIGURAÇÕES -->
+    <div class="tab" id="tab-settings">
+      <div class="card">
+        <h3>Configurações gerais</h3>
+        <p>Importação, exportação e integrações. Tudo vale para o clã selecionado.</p>
+
+        <div class="card" style="margin-bottom:14px;">
+          <h3>Importar / Exportar dados</h3>
+          <p>Importa lista de membros ou repositório e grava diretamente no banco (Supabase).</p>
+          <div class="btn-row">
+            <button class="btn btn-secondary" type="button" onclick="clickImportJSON()">📥 Importar JSON</button>
+            <button class="btn btn-primary" type="button" onclick="exportJSON()">📤 Exportar JSON local</button>
+          </div>
+          <input type="file" id="json-file-input" accept=".json,application/json" style="display:none">
+        </div>
+
+        <div class="card" style="margin-bottom:14px;">
+          <h3>Colar repositório (texto do jogo)</h3>
+          <p>Cole aqui a lista copiada dentro do jogo (aquele bloco com item, quantidade, origem, data).</p>
+          <div class="form-group">
+            <label>Texto copiado</label>
+            <textarea id="pasteRepoText" placeholder="Cole aqui o texto do jogo..."></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" type="button" onclick="parsePastedRepo()">🔄 Converter e salvar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Membros -->
+    <div class="tab active" id="tab-members">
+      <div class="card">
+        <h3>Membros do clã</h3>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="openMemberModal()">➕ Novo membro</button>
+          <button class="btn btn-danger" onclick="clearAllMembers()">🗑️ Apagar todos</button>
+        </div>
+        <div class="input-row">
+          <input id="searchMembers" class="input" placeholder="🔍 Buscar nick..." oninput="renderMembers()" style="flex: 1;">
+          <select id="filterClass" onchange="renderMembers()">
+            <option value="">Todas as classes</option>
+            <option>Arqueira</option><option>Bardo</option><option>Berserker</option><option>Lanceiro</option><option>Maga</option><option>Mago</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Nick</th><th>Level</th><th>Power</th><th>Classe</th><th>Data</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="members-body"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presença -->
+    <div class="tab" id="tab-events">
+      <div class="card">
+        <h3>Presença em eventos</h3>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="openEventModal()">➕ Novo evento</button>
+          <button class="btn btn-danger" onclick="clearAllEvents()">🗑️ Apagar tudo</button>
+        </div>
+        <div class="input-row">
+          <select id="filterEvent" onchange="renderEvents()">
+            <option value="">Todos eventos</option><option>Boss do clã</option><option>Copa Ymir</option><option>Guerra da coroa</option><option>Ilha de Sindri</option><option>Interserver</option>
+          </select>
+          <select id="filterStatus" onchange="renderEvents()">
+            <option value="">Todos status</option><option>Presente</option><option>Faltou</option><option>Justificou</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Nick</th><th>Evento</th><th>Status</th><th>Justificativa</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="events-body"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entregas -->
+    <div class="tab" id="tab-deliveries">
+      <div class="card">
+        <h3>Entregas do clã</h3>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="openDeliveryModal()">➕ Registrar entrega</button>
+          <button class="btn btn-secondary" onclick="showMonthlyReport()">📋 Relatório mensal</button>
+        </div>
+        <div class="input-row">
+          <input id="searchDeliveriesNick" class="input" placeholder="🔍 Buscar nick..." oninput="renderDeliveries()" style="flex: 1;">
+          <select id="filterDeliveriesClass" onchange="renderDeliveries()">
+            <option value="">Todas as classes</option><option>Arqueira</option><option>Bardo</option><option>Berserker</option><option>Lanceiro</option><option>Maga</option><option>Mago</option>
+          </select>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Nick</th><th>Classe</th><th>Descrição</th><th>Qtd</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="deliveries-body"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+        <div class="card" id="monthly-report-card" style="margin-top:14px; display:none;">
+          <h3>Relatório mensal</h3>
+          <div class="input-row">
+            <input type="month" class="input" id="reportMonth" onchange="renderMonthlyReport()">
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>Nick</th><th>Resumo</th></tr></thead>
+              <tbody id="monthly-report-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Repositório -->
+    <div class="tab" id="tab-repo">
+      <div class="card">
+        <h3>Repositório</h3>
+        <div class="card" style="margin-bottom:10px;">
+          <h3>Novo item</h3>
+
+          <div class="form-group">
+            <label>Descrição</label>
+            <input id="repoItem" class="input" placeholder="Nome do item">
+          </div>
+
+          <div class="form-group">
+            <label>Tipo</label>
+            <input id="repoType" class="input" placeholder="Tipo">
+          </div>
+
+          <div class="form-group">
+            <label>Boss / origem</label>
+            <input id="repoBoss" class="input" placeholder="Boss / origem">
+          </div>
+
+          <div class="form-group">
+            <label>Quantidade</label>
+            <input id="repoQuantity" class="input" type="number" placeholder="Qtd">
+          </div>
+
+          <div class="btn-row" style="margin-top:8px;">
+            <button class="btn btn-primary" onclick="addRepoItem()">Salvar</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Item</th><th>Tipo</th><th>Boss</th><th>Qtd</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="repo-body"><tr><td colspan="5" class="empty">Nenhum item</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Relatórios -->
+    <div class="tab" id="tab-reports">
+      <div class="card">
+        <h3>Relatórios</h3>
+        <p>Espaço livre para relatórios avançados no futuro.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAIS -->
+  <div class="modal" id="member-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Membro</h2>
+        <button class="close-btn" onclick="closeModal('member-modal')">✕</button>
+      </div>
+      <input type="hidden" id="member-index">
+      <div class="form-group">
+        <label>Nick</label>
+        <input id="member-nick" class="input">
+      </div>
+      <div class="form-group">
+        <label>Level</label>
+        <input id="member-level" class="input" type="number">
+      </div>
+      <div class="form-group">
+        <label>Power</label>
+        <input id="member-power" class="input">
+      </div>
+      <div class="form-group">
+        <label>Classe</label>
+        <select id="member-class" class="input">
+          <option>Arqueira</option><option>Bardo</option><option>Berserker</option><option>Lanceiro</option><option>Maga</option><option>Mago</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Data (dd/mm/aaaa)</label>
+        <input id="member-date" class="input">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('member-modal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveMember()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="event-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Evento</h2>
+        <button class="close-btn" onclick="closeModal('event-modal')">✕</button>
+      </div>
+      <input type="hidden" id="event-index">
+      <div class="form-group">
+        <label>Data (dd/mm/aaaa)</label>
+        <input id="event-date" class="input">
+      </div>
+      <div class="form-group">
+        <label>Evento</label>
+        <select id="event-name" class="input">
+          <option>Boss do clã</option><option>Copa Ymir</option><option>Guerra da coroa</option><option>Ilha de Sindri</option><option>Interserver</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nick</label>
+        <select id="event-nick" class="input"></select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="event-status" class="input">
+          <option>Presente</option><option>Faltou</option><option>Justificou</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Justificativa</label>
+        <input id="event-just" class="input">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('event-modal')">Fechar</button>
+        <button class="btn btn-primary" onclick="saveEvent()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="delivery-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Entrega</h2>
+        <button class="close-btn" onclick="closeModal('delivery-modal')">✕</button>
+      </div>
+      <input type="hidden" id="delivery-index">
+      <div class="form-group">
+        <label>Data (dd/mm/aaaa)</label>
+        <input id="delivery-date" class="input">
+      </div>
+      <div class="form-group">
+        <label>Nick</label>
+        <select id="delivery-nick" class="input"></select>
+      </div>
+      <div class="form-group">
+        <label>Classe</label>
+        <select id="delivery-class" class="input">
+          <option>Arqueira</option><option>Bardo</option><option>Berserker</option><option>Lanceiro</option><option>Maga</option><option>Mago</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <input id="delivery-desc" class="input" list="delivery-items">
+        <datalist id="delivery-items"></datalist>
+      </div>
+      <div class="form-group">
+        <label>Quantidade</label>
+        <input id="delivery-qtd" class="input" type="number" min="1" value="1">
+      </div>
+      <div class="form-group">
+        <label>Observação</label>
+        <input id="delivery-obs" class="input">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('delivery-modal')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveDelivery()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
+
+    const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); /* [web:44] */
+
+    let state = {
+      clan: 1,
+      members: { 1: [], 2: [] },
+      events:  { 1: [], 2: [] },
+      deliveries: { 1: [], 2: [] },
+      repoItems: { 1: [], 2: [] }
+    };
+
+    function showMessage(msg, type = 'success') {
+      const container = document.getElementById('msgContainer');
+      container.innerHTML = `<div class="${type}">${msg}</div>`;
+      setTimeout(() => { container.innerHTML = ''; }, 3000);
+    }
+
+    function toISOFromBR(brDate) {
+      if (!brDate) return null;
+      const parts = brDate.split('/');
+      if (parts.length !== 3) return null;
+      const [d, m, y] = parts;
+      return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    }
+
+    function toBRFromISO(isoDate) {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      if (!y || !m || !d) return '';
+      return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
+    }
+
+    function toBRDayMonthFromISO(isoDate) {
+      if (!isoDate) return '';
+      const d = new Date(isoDate);
+      if (Number.isNaN(d.getTime())) return '';
+      const dia = String(d.getDate()).padStart(2,'0');
+      const mes = String(d.getMonth() + 1).padStart(2,'0');
+      return `${dia}/${mes}`;
+    }
+
+    function todayBR() {
+      const now = new Date();
+      return `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+    }
+
+    function setClan(clan) {
+      state.clan = clan;
+      document.querySelectorAll('.clan-btn').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.clan) === clan);
+      });
+      document.getElementById('clanDisplay').textContent = clan;
+      loadAll();
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      document.querySelectorAll('.tab').forEach(sec => {
+        const isActive = sec.id === 'tab-' + tab;
+        sec.classList.toggle('active', isActive);
+        sec.style.display = isActive ? 'block' : 'none';
+      });
+
+      const titles = {
+        members: { icon:'👥', text:'Membros' },
+        events: { icon:'📊', text:'Presença' },
+        deliveries: { icon:'📦', text:'Entregas' },
+        repo: { icon:'📂', text:'Repositório' },
+        reports: { icon:'📈', text:'Relatórios' },
+        settings: { icon:'⚙️', text:'Configurações' }
+      };
+      const info = titles[tab] || { icon:'👥', text:'Painel' };
+      document.getElementById('pageTitle').innerHTML = `<span id="pageIcon">${info.icon}</span> ${info.text} do clã`;
+    }
+
+    function toggleTheme() {
+      const current = document.body.dataset.theme || 'light';
+      const next = current === 'light' ? 'dark' : 'light';
+      document.body.dataset.theme = next;
+
+      if (next === 'dark') {
+        document.body.style.background = '#0f172a';
+      } else {
+        document.body.style.background = '#f1f5f9';
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    async function loadAll() {
+      await Promise.all([
+        loadMembers(),
+        loadEvents(),
+        loadDeliveries(),
+        loadRepo()
+      ]);
+      renderMembers();
+      renderEvents();
+      renderDeliveries();
+      renderRepo();
+      fillEventNickOptions();
+      fillDeliveryNickOptions();
+      fillDeliveryItemOptions();
+    }
+
+    async function loadMembers() {
+      const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .eq('clan', state.clan)
+        .order('nick', { ascending: true }); /* [web:30][web:34] */
+
+      if (error) {
+        console.error(error);
+        showMessage('❌ Erro ao carregar membros', 'error');
+        return;
+      }
+      state.members[state.clan] = data || [];
+    }
+
+    async function loadEvents() {
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .eq('clan', state.clan)
+        .order('data', { ascending: true });
+
+      if (error) { console.error(error); return; }
+      state.events[state.clan] = data || [];
+    }
+
+    async function loadDeliveries() {
+      const { data, error } = await supabase
+        .from('deliveries')
+        .select('*')
+        .eq('clan', state.clan)
+        .order('data', { ascending: true });
+
+      if (error) { console.error(error); return; }
+      state.deliveries[state.clan] = data || [];
+    }
+
+    async function loadRepo() {
+      const { data, error } = await supabase
+        .from('repo_items')
+        .select('*')
+        .eq('clan', state.clan)
+        .order('item', { ascending: true });
+
+      if (error) { console.error(error); return; }
+      state.repoItems[state.clan] = data || [];
+    }
+
+    function renderMembers() {
+      const body = document.getElementById('members-body');
+      const all = state.members[state.clan] || [];
+      const search = (document.getElementById('searchMembers')?.value || '').toLowerCase();
+      const filterClass = document.getElementById('filterClass')?.value || '';
+
+      let list = all.map((m, idx) => ({ ...m, _idx: idx }));
+
+      if (search)      list = list.filter(m => (m.nick || '').toLowerCase().includes(search));
+      if (filterClass) list = list.filter(m => m.classe === filterClass);
+
+      list.sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR'));
+
+      body.innerHTML = list.map(m => `
+        <tr>
+          <td>${m.nick}</td>
+          <td>${m.level ?? ''}</td>
+          <td>${m.power != null ? Number(m.power).toLocaleString('pt-BR') : ''}</td>
+          <td>${m.classe ?? ''}</td>
+          <td>${toBRDayMonthFromISO(m.data)}</td>
+          <td>
+            <button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;"
+                    onclick="openMemberModal(${m._idx})">Editar</button>
+            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;"
+                    onclick="deleteMember(${m._idx})">Excluir</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
+    }
+
+    function fillEventNickOptions() {
+      const select = document.getElementById('event-nick');
+      if (!select) return;
+      select.innerHTML = '<option value=""></option>' +
+        (state.members[state.clan] || [])
+          .slice()
+          .sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR'))
+          .map(m => `<option>${m.nick}</option>`)
+          .join('');
+    }
+
+    function fillDeliveryNickOptions() {
+      const select = document.getElementById('delivery-nick');
+      if (!select) return;
+      select.innerHTML = '<option value=""></option>' +
+        (state.members[state.clan] || [])
+          .slice()
+          .sort((a, b) => (a.nick || '').localeCompare(b.nick || '', 'pt-BR'))
+          .map(m => `<option>${m.nick}</option>`)
+          .join('');
+    }
+
+    function fillDeliveryItemOptions() {
+      const listEl = document.getElementById('delivery-items');
+      if (!listEl) return;
+      const items = (state.repoItems[state.clan] || [])
+        .slice()
+        .sort((a, b) => (a.item || '').localeCompare(b.item || '', 'pt-BR'));
+      listEl.innerHTML = items.map(r => `<option value="${r.item}"></option>`).join('');
+    }
+
+    function openMemberModal(index = null) {
+      document.getElementById('member-index').value = index !== null ? index : '';
+      if (index !== null && index !== '') {
+        const m = state.members[state.clan][index];
+        document.getElementById('member-nick').value = m.nick;
+        document.getElementById('member-level').value = m.level || '';
+        document.getElementById('member-power').value = m.power != null ? Number(m.power).toLocaleString('pt-BR') : '';
+        document.getElementById('member-class').value = m.classe || 'Arqueira';
+        document.getElementById('member-date').value = m.data ? toBRFromISO(m.data) : todayBR();
+      } else {
+        document.getElementById('member-nick').value = '';
+        document.getElementById('member-level').value = '';
+        document.getElementById('member-power').value = '';
+        document.getElementById('member-class').value = 'Arqueira';
+        document.getElementById('member-date').value = todayBR();
+      }
+      openModal('member-modal');
+    }
+
+    async function saveMember() {
+      const idx = document.getElementById('member-index').value;
+      const nick = document.getElementById('member-nick').value.trim();
+      if (!nick) { showMessage('❌ Nick obrigatório', 'error'); return; }
+
+      const levelStr = document.getElementById('member-level').value.trim();
+      const powerStr = document.getElementById('member-power').value.trim();
+
+      const record = {
+        clan: state.clan,
+        nick,
+        level: levelStr ? parseInt(levelStr, 10) : null,
+        power: powerStr ? parseInt(powerStr.replace(/\./g, ''), 10) : null,
+        classe: document.getElementById('member-class').value,
+        data: toISOFromBR(document.getElementById('member-date').value)
+      };
+
+      try {
+        const list = state.members[state.clan] || [];
+        if (idx !== '') {
+          const existing = list[idx];
+          if (!existing || !existing.id) {
+            showMessage('❌ Registro sem id, recarregue', 'error');
+            return;
+          }
+          const { data, error } = await supabase
+            .from('members')
+            .update(record)
+            .eq('id', existing.id)
+            .select()
+            .single();
+          if (error) throw error;
+          list[idx] = data;
+        } else {
+          const { data, error } = await supabase
+            .from('members')
+            .insert(record)
+            .select()
+            .single();
+          if (error) throw error;
+          list.push(data);
+        }
+        state.members[state.clan] = list;
+        closeModal('member-modal');
+        renderMembers();
+        fillEventNickOptions();
+        fillDeliveryNickOptions();
+        showMessage('✅ Membro salvo!', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao salvar membro', 'error');
+      }
+    }
+
+    async function deleteMember(index) {
+      const list = state.members[state.clan] || [];
+      const item = list[index];
+      if (!item) { showMessage('❌ Membro não encontrado', 'error'); return; }
+
+      if (!confirm(`Excluir membro ${item.nick}?`)) return;
+
+      try {
+        if (item.id) {
+          const { error } = await supabase
+            .from('members')
+            .delete()
+            .eq('id', item.id);
+          if (error) throw error;
+        }
+        list.splice(index, 1);
+        state.members[state.clan] = list;
+        renderMembers();
+        fillEventNickOptions();
+        fillDeliveryNickOptions();
+        showMessage('✅ Excluído', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao excluir membro', 'error');
+      }
+    }
+
+    async function clearAllMembers() {
+      if (!confirm('Apagar TODOS os membros do clã atual?')) return;
+      try {
+        const { error } = await supabase
+          .from('members')
+          .delete()
+          .eq('clan', state.clan);
+        if (error) throw error;
+        state.members[state.clan] = [];
+        renderMembers();
+        fillEventNickOptions();
+        fillDeliveryNickOptions();
+        showMessage('✅ Membros apagados', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao apagar membros', 'error');
+      }
+    }
+
+    function openEventModal(index = null) {
+      document.getElementById('event-index').value = index != null ? index : '';
+      if (index != null && index !== '') {
+        const e = state.events[state.clan][index];
+        document.getElementById('event-date').value = e.data ? toBRFromISO(e.data) : todayBR();
+        document.getElementById('event-name').value = e.evento || 'Boss do clã';
+        document.getElementById('event-status').value = e.status || 'Presente';
+        document.getElementById('event-just').value = e.justificativa || '';
+        fillEventNickOptions();
+        document.getElementById('event-nick').value = e.nick || '';
+      } else {
+        document.getElementById('event-date').value = todayBR();
+        document.getElementById('event-name').value = 'Boss do clã';
+        document.getElementById('event-status').value = 'Presente';
+        document.getElementById('event-just').value = '';
+        fillEventNickOptions();
+        document.getElementById('event-nick').value = '';
+      }
+      openModal('event-modal');
+    }
+
+    async function saveEvent() {
+      const idx = document.getElementById('event-index').value;
+      const nick = document.getElementById('event-nick').value;
+      if (!nick) { showMessage('❌ Nick obrigatório', 'error'); return; }
+
+      const record = {
+        clan: state.clan,
+        data: toISOFromBR(document.getElementById('event-date').value),
+        evento: document.getElementById('event-name').value,
+        nick,
+        status: document.getElementById('event-status').value,
+        justificativa: document.getElementById('event-just').value
+      };
+
+      const list = state.events[state.clan] || [];
+      try {
+        if (idx !== '') {
+          const existing = list[idx];
+          const { data, error } = await supabase
+            .from('events')
+            .update(record)
+            .eq('id', existing.id)
+            .select()
+            .single();
+          if (error) throw error;
+          list[idx] = data;
+        } else {
+          const { data, error } = await supabase
+            .from('events')
+            .insert(record)
+            .select()
+            .single();
+          if (error) throw error;
+          list.push(data);
+        }
+        state.events[state.clan] = list;
+        closeModal('event-modal');
+        renderEvents();
+        showMessage('✅ Evento salvo', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao salvar evento', 'error');
+      }
+    }
+
+    async function deleteEvent(index) {
+      const list = state.events[state.clan] || [];
+      const item = list[index];
+      if (!item) return;
+      if (!confirm('Excluir este evento?')) return;
+      try {
+        const { error } = await supabase
+          .from('events')
+          .delete()
+          .eq('id', item.id);
+        if (error) throw error;
+        list.splice(index, 1);
+        state.events[state.clan] = list;
+        renderEvents();
+        showMessage('✅ Evento excluído', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao excluir evento', 'error');
+      }
+    }
+
+    async function clearAllEvents() {
+      if (!confirm('Apagar TODOS os eventos do clã atual?')) return;
+      try {
+        const { error } = await supabase
+          .from('events')
+          .delete()
+          .eq('clan', state.clan);
+        if (error) throw error;
+        state.events[state.clan] = [];
+        renderEvents();
+        showMessage('✅ Eventos apagados', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao apagar eventos', 'error');
+      }
+    }
+
+    function renderEvents() {
+      const body = document.getElementById('events-body');
+      let list = [...(state.events[state.clan] || [])];
+
+      const filterEvent  = document.getElementById('filterEvent')?.value || '';
+      const filterStatus = document.getElementById('filterStatus')?.value || '';
+
+      if (filterEvent)  list = list.filter(e => e.evento === filterEvent);
+      if (filterStatus) list = list.filter(e => e.status === filterStatus);
+
+      list.sort((a, b) => (a.data || '').localeCompare(b.data || ''));
+
+      body.innerHTML = list.map((e, i) => `
+        <tr>
+          <td>${toBRDayMonthFromISO(e.data)}</td>
+          <td>${e.nick}</td>
+          <td>${e.evento}</td>
+          <td>${e.status}</td>
+          <td>${e.justificativa || ''}</td>
+          <td>
+            <button class="btn btn-secondary" style="padding:3px 8px;font-size:11px" onclick="openEventModal(${i})">Editar</button>
+            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px" onclick="deleteEvent(${i})">Excluir</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
+    }
+
+    function openDeliveryModal(index = null) {
+      document.getElementById('delivery-index').value = index != null ? index : '';
+      fillDeliveryNickOptions();
+      fillDeliveryItemOptions();
+
+      if (index != null && index !== '') {
+        const d = state.deliveries[state.clan][index];
+        document.getElementById('delivery-date').value = d.data ? toBRFromISO(d.data) : todayBR();
+        document.getElementById('delivery-nick').value = d.nick;
+        document.getElementById('delivery-class').value = d.classe;
+        document.getElementById('delivery-desc').value = d.descricao;
+        document.getElementById('delivery-qtd').value = d.qtd || 1;
+        document.getElementById('delivery-obs').value = d.obs || '';
+      } else {
+        document.getElementById('delivery-date').value = todayBR();
+        document.getElementById('delivery-nick').value = '';
+        document.getElementById('delivery-class').value = 'Arqueira';
+        document.getElementById('delivery-desc').value = '';
+        document.getElementById('delivery-qtd').value = 1;
+        document.getElementById('delivery-obs').value = '';
+      }
+
+      openModal('delivery-modal');
+    }
+
+    async function saveDelivery() {
+      const idx   = document.getElementById('delivery-index').value;
+      const date  = document.getElementById('delivery-date').value;
+      const nick  = document.getElementById('delivery-nick').value;
+      const classe = document.getElementById('delivery-class').value;
+      const desc  = document.getElementById('delivery-desc').value.trim();
+      const qtdStr = document.getElementById('delivery-qtd').value;
+      const obs   = document.getElementById('delivery-obs').value.trim();
+
+      if (!date || !nick || !desc || !qtdStr) {
+        showMessage('❌ Data, Nick, Descrição e Quantidade são obrigatórios', 'error');
+        return;
+      }
+
+      const qtd = parseInt(qtdStr, 10);
+      if (isNaN(qtd) || qtd <= 0) {
+        showMessage('❌ Quantidade inválida', 'error');
+        return;
+      }
+
+      const record = {
+        clan: state.clan,
+        data: toISOFromBR(date),
+        nick,
+        classe,
+        descricao: desc,
+        qtd,
+        obs
+      };
+
+      const list = state.deliveries[state.clan] || [];
+      try {
+        if (idx !== '') {
+          const existing = list[idx];
+          const { data, error } = await supabase
+            .from('deliveries')
+            .update(record)
+            .eq('id', existing.id)
+            .select()
+            .single();
+          if (error) throw error;
+          list[idx] = data;
+        } else {
+          const { data, error } = await supabase
+            .from('deliveries')
+            .insert(record)
+            .select()
+            .single();
+          if (error) throw error;
+          list.push(data);
+        }
+
+        const repoList = state.repoItems[state.clan] || [];
+        const repoIndex = repoList.findIndex(r => r.item === record.descricao);
+        if (repoIndex !== -1) {
+          repoList[repoIndex].qtd = (repoList[repoIndex].qtd || 0) - qtd;
+          if (repoList[repoIndex].qtd <= 0) {
+            const toDelete = repoList[repoIndex];
+            const { error: errDel } = await supabase
+              .from('repo_items')
+              .delete()
+              .eq('id', toDelete.id);
+            if (errDel) console.error(errDel);
+            repoList.splice(repoIndex, 1);
+          } else {
+            const toUpdate = repoList[repoIndex];
+            const { error: errUp } = await supabase
+              .from('repo_items')
+              .update({ qtd: repoList[repoIndex].qtd })
+              .eq('id', toUpdate.id);
+            if (errUp) console.error(errUp);
+          }
+          state.repoItems[state.clan] = repoList;
+        }
+
+        state.deliveries[state.clan] = list;
+        closeModal('delivery-modal');
+        renderDeliveries();
+        renderRepo();
+        fillDeliveryItemOptions();
+        showMessage('✅ Entrega salva', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao salvar entrega', 'error');
+      }
+    }
+
+    async function deleteDelivery(index) {
+      const list = state.deliveries[state.clan] || [];
+      const item = list[index];
+      if (!item) return;
+      if (!confirm('Excluir esta entrega?')) return;
+      try {
+        const { error } = await supabase
+          .from('deliveries')
+          .delete()
+          .eq('id', item.id);
+        if (error) throw error;
+        list.splice(index, 1);
+        state.deliveries[state.clan] = list;
+        renderDeliveries();
+        showMessage('✅ Entrega excluída', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao excluir entrega', 'error');
+      }
+    }
+
+    function renderDeliveries() {
+      const body = document.getElementById('deliveries-body');
+      let list = [...(state.deliveries[state.clan] || [])];
+
+      const searchNick = (document.getElementById('searchDeliveriesNick')?.value || '').toLowerCase();
+      const filterClass = document.getElementById('filterDeliveriesClass')?.value || '';
+
+      if (searchNick) list = list.filter(d => (d.nick || '').toLowerCase().includes(searchNick));
+      if (filterClass) list = list.filter(d => d.classe === filterClass);
+
+      body.innerHTML = list.map((d, i) => `
+        <tr>
+          <td>${toBRDayMonthFromISO(d.data)}</td>
+          <td>${d.nick}</td>
+          <td>${d.classe}</td>
+          <td>${d.descricao}</td>
+          <td>${d.qtd || ''}</td>
+          <td>
+            <button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openDeliveryModal(${i})">Editar</button>
+            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteDelivery(${i})">Excluir</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="6">Nenhuma entrega</td></tr>';
+    }
+
+    function showMonthlyReport() {
+      const card = document.getElementById('monthly-report-card');
+      card.style.display = card.style.display === 'none' ? 'block' : 'none';
+      if (card.style.display === 'block') {
+        renderMonthlyReport();
+      }
+    }
+
+    function renderMonthlyReport() {
+      const monthInput = document.getElementById('reportMonth').value;
+      const body = document.getElementById('monthly-report-body');
+      if (!monthInput) {
+        body.innerHTML = '<tr><td colspan="2">Selecione um mês</td></tr>';
+        return;
+      }
+      const [year, month] = monthInput.split('-');
+      const deliveries = state.deliveries[state.clan] || [];
+      const filtered = deliveries.filter(d => {
+        if (!d.data) return false;
+        const [y, m] = d.data.split('-');
+        return y === year && m === month;
+      });
+
+      const byNick = {};
+      filtered.forEach(d => {
+        if (!byNick[d.nick]) byNick[d.nick] = [];
+        byNick[d.nick].push(d);
+      });
+
+      const rows = Object.keys(byNick).sort().map(nick => {
+        const resumo = byNick[nick].map(d => `${toBRDayMonthFromISO(d.data)} - ${d.descricao} (x${d.qtd || 1})`).join('<br>');
+        return `<tr><td>${nick}</td><td>${resumo}</td></tr>`;
+      });
+
+      body.innerHTML = rows.join('') || '<tr><td colspan="2">Nenhuma entrega nesse mês</td></tr>';
+    }
+
+    async function addRepoItem() {
+      const item = document.getElementById('repoItem').value.trim();
+      const tipo = document.getElementById('repoType').value.trim();
+      const boss = document.getElementById('repoBoss').value.trim();
+      const qtdStr  = document.getElementById('repoQuantity').value.trim();
+
+      if (!item || !qtdStr) {
+        showMessage('❌ Item e quantidade são obrigatórios!', 'error');
+        return;
+      }
+
+      const qtd = parseInt(qtdStr, 10);
+      if (isNaN(qtd) || qtd <= 0) {
+        showMessage('❌ Quantidade inválida!', 'error');
+        return;
+      }
+
+      try {
+        const repo = state.repoItems[state.clan] || [];
+        const existing = repo.find(r => r.item.toLowerCase() === item.toLowerCase());
+        if (existing) {
+          const newQtd = (existing.qtd || 0) + qtd;
+          const { data, error } = await supabase
+            .from('repo_items')
+            .update({ qtd: newQtd, tipo: tipo || existing.tipo, boss: boss || existing.boss })
+            .eq('id', existing.id)
+            .select()
+            .single();
+          if (error) throw error;
+          Object.assign(existing, data);
+        } else {
+          const { data, error } = await supabase
+            .from('repo_items')
+            .insert({ clan: state.clan, item, tipo, boss, qtd })
+            .select()
+            .single();
+          if (error) throw error;
+          repo.push(data);
+        }
+
+        state.repoItems[state.clan] = repo;
+        renderRepo();
+        fillDeliveryItemOptions();
+
+        document.getElementById('repoItem').value = '';
+        document.getElementById('repoType').value = '';
+        document.getElementById('repoBoss').value = '';
+        document.getElementById('repoQuantity').value = '';
+        showMessage('✅ Item salvo!', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao salvar no repositório', 'error');
+      }
+    }
+
+    function renderRepo() {
+      const body = document.getElementById('repo-body');
+      const repo = (state.repoItems[state.clan] || [])
+        .slice()
+        .sort((a, b) => (a.item || '').localeCompare(b.item || '', 'pt-BR'));
+      body.innerHTML = repo.map((r, i) => `
+        <tr>
+          <td>${r.item}</td>
+          <td>${r.tipo || ''}</td>
+          <td>${r.boss || ''}</td>
+          <td>${r.qtd}</td>
+          <td>
+            <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="removeRepoItem(${i})">Excluir</button>
+          </td>
+        </tr>
+      `).join('') || '<tr><td colspan="5" class="empty">Nenhum item</td></tr>';
+    }
+
+    async function removeRepoItem(index) {
+      const repo = state.repoItems[state.clan] || [];
+      const item = repo[index];
+      if (!item) return;
+      if (!confirm('Excluir este item do repositório?')) return;
+      try {
+        const { error } = await supabase
+          .from('repo_items')
+          .delete()
+          .eq('id', item.id);
+        if (error) throw error;
+        repo.splice(index, 1);
+        state.repoItems[state.clan] = repo;
+        renderRepo();
+        fillDeliveryItemOptions();
+        showMessage('✅ Item removido!', 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao excluir item', 'error');
+      }
+    }
+
+    async function parsePastedRepo() {
+      const raw = (document.getElementById('pasteRepoText').value || '').trim();
+      if (!raw) {
+        showMessage('❌ Cole o texto do repositório primeiro', 'error');
+        return;
+      }
+
+      const lines = raw.split('\n')
+        .map(l => l.trim())
+        .filter(l => l);
+
+      if (!lines.length) {
+        showMessage('❌ Não encontrei linhas válidas', 'error');
+        return;
+      }
+
+      const repo = [];
+
+      for (const line of lines) {
+        const matchMain = line.match(/^(.*?)(\d+)(Santuário da União.*)$/);
+        if (!matchMain) continue;
+
+        const nomeBruto = matchMain[1].trim();
+        const qtd = parseInt(matchMain[2], 10) || 0;
+        const origemData = matchMain[3].trim();
+
+        const origemMatch = origemData.match(/^(.*?)(20\d{2}\.\d{2}\.\d{2}.*)$/);
+        const origem = origemMatch ? origemMatch[1].trim() : origemData;
+
+        if (!nomeBruto || !qtd) continue;
+
+        const existing = repo.find(r =>
+          r.item.toLowerCase() === nomeBruto.toLowerCase() &&
+          r.boss === origem
+        );
+        if (existing) {
+          existing.qtd += qtd;
+        } else {
+          repo.push({ item: nomeBruto, tipo: '', boss: origem, qtd });
+        }
+      }
+
+      if (!repo.length) {
+        showMessage('❌ Não consegui interpretar nenhum item', 'error');
+        return;
+      }
+
+      try {
+        const { error: delErr } = await supabase
+          .from('repo_items')
+          .delete()
+          .eq('clan', state.clan);
+        if (delErr) console.error(delErr);
+
+        const toInsert = repo.map(r => ({ clan: state.clan, ...r }));
+        const { data, error } = await supabase
+          .from('repo_items')
+          .insert(toInsert)
+          .select();
+
+        if (error) throw error;
+
+        state.repoItems[state.clan] = data || [];
+        renderRepo();
+        fillDeliveryItemOptions();
+        showMessage(`✅ ${repo.length} itens carregados do texto!`, 'success');
+      } catch (err) {
+        console.error(err);
+        showMessage('❌ Erro ao salvar no repositório', 'error');
+      }
+    }
+
+    function clickImportJSON() {
+      document.getElementById('json-file-input').onchange = handleJSONFile;
+      document.getElementById('json-file-input').click();
+    }
+
+    async function handleJSONFile(evt) {
+      const file = evt.target.files && evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+
+          if (Array.isArray(imported) && imported.length > 0) {
+            if (imported[0].nick !== undefined && imported[0].nome === undefined) {
+              const list = imported.map(m => ({
+                clan: state.clan,
+                nick: m.nick,
+                level: m.level ?? null,
+                power: m.power ?? null,
+                classe: m.classe ?? null,
+                data: m.data ?? null
+              }));
+              const { error: delErr } = await supabase
+                .from('members')
+                .delete()
+                .eq('clan', state.clan);
+              if (delErr) console.error(delErr);
+              const { data, error } = await supabase
+                .from('members')
+                .insert(list)
+                .select();
+              if (error) throw error;
+              state.members[state.clan] = data || [];
+              renderMembers();
+              fillEventNickOptions();
+              fillDeliveryNickOptions();
+              showMessage(`✅ ${data.length} membros importados!`, 'success');
+              return;
+            }
+
+            if (imported[0].nome !== undefined &&
+                (imported[0].quantidade !== undefined || imported[0].origem !== undefined)) {
+              const repoItems = imported.map(item => ({
+                clan: state.clan,
+                item: item.nome || '',
+                tipo: '',
+                boss: item.origem || '',
+                qtd: parseInt(item.quantidade) || 0
+              }));
+              const { error: delErr2 } = await supabase
+                .from('repo_items')
+                .delete()
+                .eq('clan', state.clan);
+              if (delErr2) console.error(delErr2);
+              const { data, error } = await supabase
+                .from('repo_items')
+                .insert(repoItems)
+                .select();
+              if (error) throw error;
+              state.repoItems[state.clan] = data || [];
+              renderRepo();
+              fillDeliveryItemOptions();
+              showMessage(`✅ ${data.length} itens importados!`, 'success');
+              return;
+            }
+          }
+
+          showMessage('❌ Formato de arquivo não reconhecido!', 'error');
+        } catch (err) {
+          console.error(err);
+          showMessage('❌ Erro ao ler arquivo: ' + err.message, 'error');
+        }
+      };
+      reader.readAsText(file, 'utf-8');
+    }
+
+    function exportJSON() {
+      const dataStr = JSON.stringify(state, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `murders-clan${state.clan}-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showMessage('✅ Exportado (estado local)!', 'success');
+    }
+
+    window.onload = loadAll;
+  </script>
+</body>
+</html>
