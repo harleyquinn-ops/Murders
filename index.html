@@ -697,20 +697,17 @@ window.addEventListener('DOMContentLoaded', () => {
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
     async function loadAll() {
-      await Promise.all([
-        loadMembers(),
-        loadEvents(),
-        loadDeliveries(),
-        loadRepo()
-      ]);
-      renderMembers();
-      renderEvents();
-      renderDeliveries();
-      renderRepo();
-      fillEventNickOptions();
-      fillDeliveryNickOptions();
-      fillDeliveryItemOptions();
-    }
+  if (!supabase) {
+    console.warn('Supabase ainda não inicializado');
+    return;
+  }
+
+  loadMembers();
+  loadEvents();
+  loadDeliveries();
+  loadRepo();
+}
+
 
     async function loadMembers() {
       const { data, error } = await supabase
