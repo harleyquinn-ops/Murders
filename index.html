@@ -697,10 +697,7 @@ window.addEventListener('DOMContentLoaded', () => {
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
     async function loadAll() {
-  if (!supabase) {
-    console.warn('Supabase ainda não inicializado');
-    return;
-  }
+  if (!supabase) return;
 
   loadMembers();
   loadEvents();
