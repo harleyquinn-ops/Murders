@@ -254,19 +254,6 @@
     .main { margin-left: 0; }
   }
     </style>
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  const { createClient } = supabase;
-
-  const supabaseClient = createClient(
-    "https://axsnlefcbghsaldbvqpv.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I"
-  );
-</script>
-
-
 </head>
 <body>
     <div id="app"></div>
@@ -1529,7 +1516,29 @@ window.addEventListener('DOMContentLoaded', () => {
       showMessage('✅ Exportado (estado local)!', 'success');
     }
 
-    window.onload = loadAll;
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
+  const SUPABASE_ANON_KEY = 'SUA_ANON_KEY_AQUI';
+
+  let supabase;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!window.supabase) {
+      alert('Supabase não carregou');
+      return;
+    }
+
+    supabase = window.supabase.createClient(
+      const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
+    );
+
+    loadAll();
+  });
+</script>
+
 </body>
 </html>
