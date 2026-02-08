@@ -588,12 +588,22 @@
    let supabase;
 
 window.addEventListener('DOMContentLoaded', () => {
+  if (!window.supabase) {
+    showMessage('❌ Supabase não carregou. Verifique conexão.', 'error');
+    return;
+  }
+
   supabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
 
-  loadAll(); // inicia tudo só depois do Supabase existir
+  if (!supabase) {
+    showMessage('❌ Falha ao iniciar Supabase', 'error');
+    return;
+  }
+
+  loadAll();
 });
 
     
