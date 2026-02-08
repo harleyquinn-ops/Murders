@@ -7,113 +7,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: Poppins, sans-serif;
-    background: #f1f5f9;
-    color: #020617;
-    display: flex;
-    min-height: 100vh;
-  }
-  .sidebar {
-    width: 250px;
-    background: #0f172a;
-    color: white;
-    padding: 20px;
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
-  }
+  body { font-family: Poppins, sans-serif; background: #f1f5f9; color: #020617; display: flex; min-height: 100vh; }
+  .sidebar { width: 250px; background: #0f172a; color: white; padding: 20px; position: fixed; height: 100vh; overflow-y: auto; }
   .sidebar h2 { margin-bottom: 30px; font-weight: 600; }
-  .clan-btn {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    background: #1e293b;
-    color: white;
-    cursor: pointer;
-    border-radius: 999px;
-    font-family: Poppins, sans-serif;
-    font-weight: 500;
-  }
+  .clan-btn { width: 100%; padding: 10px; margin: 5px 0; border: none; background: #1e293b; color: white; cursor: pointer; border-radius: 999px; font-family: Poppins, sans-serif; font-weight: 500; }
   .clan-btn.active { background: #38bdf8; color: #020617; }
   .clan-btn:hover { background: #0ea5e9; }
   .sidebar hr { margin: 20px 0; border: none; border-top: 1px solid #1f2937; }
-  .tab-btn {
-    width: 100%;
-    padding: 10px 14px;
-    margin: 4px 0;
-    border: none;
-    background: transparent;
-    color: #e5e7eb;
-    cursor: pointer;
-    border-radius: 999px;
-    font-family: Poppins, sans-serif;
-    text-align: left;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .tab-btn span.icon {
-    width: 22px;
-    text-align: center;
-  }
-  .tab-btn.active {
-    background: #38bdf8;
-    color: #020617;
-    font-weight: 600;
-  }
-  .tab-btn:hover {
-    background: #0ea5e9;
-    color: #020617;
-  }
-  .main {
-    margin-left: 250px;
-    flex: 1;
-    padding: 24px;
-    overflow-y: auto;
-    background: #e2f3ff;
-  }
-  .header {
-    background: #ffffff;
-    padding: 18px 22px;
-    border-radius: 16px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 8px 24px rgba(15,23,42,0.08);
-    color: #020617;
-  }
+  .tab-btn { width: 100%; padding: 10px 14px; margin: 4px 0; border: none; background: transparent; color: #e5e7eb; cursor: pointer; border-radius: 999px; font-family: Poppins, sans-serif; text-align: left; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .tab-btn span.icon { width: 22px; text-align: center; }
+  .tab-btn.active { background: #38bdf8; color: #020617; font-weight: 600; }
+  .tab-btn:hover { background: #0ea5e9; color: #020617; }
+  .main { margin-left: 250px; flex: 1; padding: 24px; overflow-y: auto; background: #e2f3ff; }
+  .header { background: #ffffff; padding: 18px 22px; border-radius: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 8px 24px rgba(15,23,42,0.08); color: #020617; }
   .header h1 { font-size: 22px; color: #020617; display:flex; align-items:center; gap:8px; }
-  .header-sub {
-    color: #6b7280;
-    font-size: 13px;
-    margin-top: 4px;
-  }
-  .card {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 16px;
-    margin-bottom: 15px;
-    box-shadow: 0 6px 20px rgba(15,23,42,0.06);
-    border: 1px solid #e5e7eb;
-    color: #020617;
-  }
+  .header-sub { color: #6b7280; font-size: 13px; margin-top: 4px; }
+  .card { background: #ffffff; padding: 20px; border-radius: 16px; margin-bottom: 15px; box-shadow: 0 6px 20px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; color: #020617; }
   .card h3 { color: #020617; margin-bottom: 8px; font-size: 15px; }
   .card p { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
   .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
-  .btn {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 12px;
-    font-family: Poppins, sans-serif;
-    font-weight: 500;
-    transition: all 0.15s;
-  }
+  .btn { padding: 8px 14px; border: none; border-radius: 999px; cursor: pointer; font-size: 12px; font-family: Poppins, sans-serif; font-weight: 500; transition: all 0.15s; }
   .btn-primary { background: #38bdf8; color: #020617; }
   .btn-primary:hover { background: #0ea5e9; transform: translateY(-1px); }
   .btn-danger { background: #ef4444; color: white; }
@@ -121,122 +34,36 @@
   .btn-secondary { background: #0f172a; color: #e5e7eb; }
   .btn-secondary:hover { background: #1e293b; }
   .input-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; align-items: flex-end; }
-  .input, select, textarea {
-    padding: 8px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 999px;
-    font-family: Poppins, sans-serif;
-    font-size: 12px;
-    background: #ffffff;
-    color: #020617;
-  }
+  .input, select, textarea { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 999px; font-family: Poppins, sans-serif; font-size: 12px; background: #ffffff; color: #020617; }
   .input { flex: 1; min-width: 150px; }
   select { flex: 0.5; min-width: 120px; border-radius: 999px; }
-  textarea {
-    width: 100%;
-    min-height: 80px;
-    resize: vertical;
-    border-radius: 18px;
-  }
+  textarea { width: 100%; min-height: 80px; resize: vertical; border-radius: 18px; }
   .input::placeholder { color: #9ca3af; }
   .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #e5e7eb; background:#ffffff; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; color:#020617; }
   table thead { background: #eff6ff; position: sticky; top: 0; }
-  table th, table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-    white-space: nowrap;
-  }
+  table th, table td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
   table th { font-weight: 600; color:#1e293b; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; }
   table tbody tr:hover { background: #f9fafb; }
-  .modal {
-    display: none !important;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(15,23,42,0.35);
-    z-index: 1000;
-    overflow-y: auto;
-  }
-  .modal.active {
-    display: flex !important;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 20px;
-  }
-  .modal-content {
-    background: #ffffff;
-    padding: 24px 22px;
-    border-radius: 18px;
-    width: 90%;
-    max-width: 480px;
-    margin-bottom: 20px;
-    box-shadow: 0 16px 40px rgba(15,23,42,0.18);
-    border: 1px solid #e5e7eb;
-    color:#020617;
-  }
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
+  .modal { display: none !important; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.35); z-index: 1000; overflow-y: auto; }
+  .modal.active { display: flex !important; align-items: flex-start; justify-content: center; padding-top: 20px; }
+  .modal-content { background: #ffffff; padding: 24px 22px; border-radius: 18px; width: 90%; max-width: 480px; margin-bottom: 20px; box-shadow: 0 16px 40px rgba(15,23,42,0.18); border: 1px solid #e5e7eb; color:#020617; }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .modal-header h2 { font-size: 17px; color: #020617; }
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: #6b7280;
-  }
+  .close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #6b7280; }
   .close-btn:hover { color:#020617; }
   .form-group { margin-bottom: 12px; }
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    margin-bottom: 4px;
-    font-weight: 600;
-    color: #0f172a;
-  }
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    width: 100%;
-    padding: 8px 12px;
-    border-radius: 999px;
-    border: 1px solid #cbd5e1;
-    background:#ffffff;
-    color:#020617;
-  }
+  .form-group label { display: block; font-size: 12px; margin-bottom: 4px; font-weight: 600; color: #0f172a; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 12px; border-radius: 999px; border: 1px solid #cbd5e1; background:#ffffff; color:#020617; }
   .form-group textarea { border-radius: 16px; }
   .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
   .tab { display: none; }
   .tab.active { display: block; }
   .empty { text-align: center; color: #6b7280; padding: 20px; }
-  .success {
-    background: #ecfdf3;
-    color: #166534;
-    padding: 10px;
-    border-radius: 999px;
-    margin-bottom: 15px;
-    border:1px solid #bbf7d0;
-    font-size:12px;
-  }
-  .error {
-    background: #fef2f2;
-    color: #b91c1c;
-    padding: 10px;
-    border-radius: 999px;
-    margin-bottom: 15px;
-    border:1px solid #fecaca;
-    font-size:12px;
-  }
-  @media (max-width: 768px) {
-    .sidebar { width: 100%; height: auto; position: relative; }
-    .main { margin-left: 0; }
-  }
-    </style>
+  .success { background: #ecfdf3; color: #166534; padding: 10px; border-radius: 999px; margin-bottom: 15px; border:1px solid #bbf7d0; font-size:12px; }
+  .error { background: #fef2f2; color: #b91c1c; padding: 10px; border-radius: 999px; margin-bottom: 15px; border:1px solid #fecaca; font-size:12px; }
+  @media (max-width: 768px) { .sidebar { width: 100%; height: auto; position: relative; } .main { margin-left: 0; } }
+  </style>
 </head>
 <body>
   <div class="sidebar">
@@ -244,24 +71,12 @@
     <button class="clan-btn active" onclick="setClan(1)" data-clan="1">Clan 1</button>
     <button class="clan-btn" onclick="setClan(2)" data-clan="2">Clan 2</button>
     <hr>
-    <button class="tab-btn active" onclick="switchTab('members')" data-tab="members">
-      <span class="icon">👥</span> Membros
-    </button>
-    <button class="tab-btn" onclick="switchTab('events')" data-tab="events">
-      <span class="icon">📊</span> Presença
-    </button>
-    <button class="tab-btn" onclick="switchTab('deliveries')" data-tab="deliveries">
-      <span class="icon">📦</span> Entregas
-    </button>
-    <button class="tab-btn" onclick="switchTab('repo')" data-tab="repo">
-      <span class="icon">📂</span> Repositório
-    </button>
-    <button class="tab-btn" onclick="switchTab('reports')" data-tab="reports">
-      <span class="icon">📈</span> Relatórios
-    </button>
-    <button class="tab-btn" onclick="switchTab('settings')" data-tab="settings">
-      <span class="icon">⚙️</span> Configurações
-    </button>
+    <button class="tab-btn active" onclick="switchTab('members')" data-tab="members"><span class="icon">👥</span> Membros</button>
+    <button class="tab-btn" onclick="switchTab('events')" data-tab="events"><span class="icon">📊</span> Presença</button>
+    <button class="tab-btn" onclick="switchTab('deliveries')" data-tab="deliveries"><span class="icon">📦</span> Entregas</button>
+    <button class="tab-btn" onclick="switchTab('repo')" data-tab="repo"><span class="icon">📂</span> Repositório</button>
+    <button class="tab-btn" onclick="switchTab('reports')" data-tab="reports"><span class="icon">📈</span> Relatórios</button>
+    <button class="tab-btn" onclick="switchTab('settings')" data-tab="settings"><span class="icon">⚙️</span> Configurações</button>
   </div>
 
   <div class="main">
@@ -272,40 +87,23 @@
       </div>
       <button class="btn btn-secondary" onclick="toggleTheme()">🌙 Tema</button>
     </div>
-
     <div id="msgContainer"></div>
 
-    <!-- CONFIGURAÇÕES -->
     <div class="tab" id="tab-settings">
       <div class="card">
         <h3>Configurações gerais</h3>
-        <p>Importação, exportação e integrações. Tudo vale para o clã selecionado.</p>
-
+        <p>Importação, exportação e integrações.</p>
         <div class="card" style="margin-bottom:14px;">
           <h3>Importar / Exportar dados</h3>
-          <p>Importa lista de membros ou repositório e grava diretamente no banco (Supabase).</p>
           <div class="btn-row">
-            <button class="btn btn-secondary" type="button" onclick="clickImportJSON()">📥 Importar JSON</button>
-            <button class="btn btn-primary" type="button" onclick="exportJSON()">📤 Exportar JSON local</button>
+            <button class="btn btn-secondary" onclick="clickImportJSON()">📥 Importar JSON</button>
+            <button class="btn btn-primary" onclick="exportJSON()">📤 Exportar JSON local</button>
           </div>
           <input type="file" id="json-file-input" accept=".json,application/json" style="display:none">
-        </div>
-
-        <div class="card" style="margin-bottom:14px;">
-          <h3>Colar repositório (texto do jogo)</h3>
-          <p>Cole aqui a lista copiada dentro do jogo (aquele bloco com item, quantidade, origem, data).</p>
-          <div class="form-group">
-            <label>Texto copiado</label>
-            <textarea id="pasteRepoText" placeholder="Cole aqui o texto do jogo..."></textarea>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary" type="button" onclick="parsePastedRepo()">🔄 Converter e salvar</button>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- Membros -->
     <div class="tab active" id="tab-members">
       <div class="card">
         <h3>Membros do clã</h3>
@@ -322,16 +120,13 @@
         </div>
         <div class="table-container">
           <table>
-            <thead>
-              <tr><th>Nick</th><th>Level</th><th>Power</th><th>Classe</th><th>Data</th><th>Ações</th></tr>
-            </thead>
+            <thead><tr><th>Nick</th><th>Level</th><th>Power</th><th>Classe</th><th>Data</th><th>Ações</th></tr></thead>
             <tbody id="members-body"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- Presença -->
     <div class="tab" id="tab-events">
       <div class="card">
         <h3>Presença em eventos</h3>
@@ -349,16 +144,13 @@
         </div>
         <div class="table-container">
           <table>
-            <thead>
-              <tr><th>Data</th><th>Nick</th><th>Evento</th><th>Status</th><th>Justificativa</th><th>Ações</th></tr>
-            </thead>
+            <thead><tr><th>Data</th><th>Nick</th><th>Evento</th><th>Status</th><th>Justificativa</th><th>Ações</th></tr></thead>
             <tbody id="events-body"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- Entregas -->
     <div class="tab" id="tab-deliveries">
       <div class="card">
         <h3>Entregas do clã</h3>
@@ -374,65 +166,35 @@
         </div>
         <div class="table-container">
           <table>
-            <thead>
-              <tr><th>Data</th><th>Nick</th><th>Classe</th><th>Descrição</th><th>Qtd</th><th>Ações</th></tr>
-            </thead>
+            <thead><tr><th>Data</th><th>Nick</th><th>Classe</th><th>Descrição</th><th>Qtd</th><th>Ações</th></tr></thead>
             <tbody id="deliveries-body"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
           </table>
-        </div>
-        <div class="card" id="monthly-report-card" style="margin-top:14px; display:none;">
-          <h3>Relatório mensal</h3>
-          <div class="input-row">
-            <input type="month" class="input" id="reportMonth" onchange="renderMonthlyReport()">
-          </div>
-          <div class="table-container">
-            <table>
-              <thead><tr><th>Nick</th><th>Resumo</th></tr></thead>
-              <tbody id="monthly-report-body"></tbody>
-            </table>
-          </div>
         </div>
       </div>
     </div>
 
-    <!-- Repositório -->
     <div class="tab" id="tab-repo">
       <div class="card">
         <h3>Repositório</h3>
         <div class="card" style="margin-bottom:10px;">
           <h3>Novo item</h3>
-          <div class="form-group">
-            <label>Descrição</label>
-            <input id="repoItem" class="input" placeholder="Nome do item">
-          </div>
-          <div class="form-group">
-            <label>Tipo</label>
-            <input id="repoType" class="input" placeholder="Tipo">
-          </div>
-          <div class="form-group">
-            <label>Boss / origem</label>
-            <input id="repoBoss" class="input" placeholder="Boss / origem">
-          </div>
-          <div class="form-group">
-            <label>Quantidade</label>
-            <input id="repoQuantity" class="input" type="number" placeholder="Qtd">
-          </div>
+          <div class="form-group"><label>Descrição</label><input id="repoItem" class="input" placeholder="Nome do item"></div>
+          <div class="form-group"><label>Tipo</label><input id="repoType" class="input" placeholder="Tipo"></div>
+          <div class="form-group"><label>Boss / origem</label><input id="repoBoss" class="input" placeholder="Boss / origem"></div>
+          <div class="form-group"><label>Quantidade</label><input id="repoQuantity" class="input" type="number" placeholder="Qtd"></div>
           <div class="btn-row" style="margin-top:8px;">
             <button class="btn btn-primary" onclick="addRepoItem()">Salvar</button>
           </div>
         </div>
         <div class="table-container">
           <table>
-            <thead>
-              <tr><th>Item</th><th>Tipo</th><th>Boss</th><th>Qtd</th><th>Ações</th></tr>
-            </thead>
+            <thead><tr><th>Item</th><th>Tipo</th><th>Boss</th><th>Qtd</th><th>Ações</th></tr></thead>
             <tbody id="repo-body"><tr><td colspan="5" class="empty">Nenhum item</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- Relatórios -->
     <div class="tab" id="tab-reports">
       <div class="card">
         <h3>Relatórios</h3>
@@ -441,13 +203,9 @@
     </div>
   </div>
 
-  <!-- MODAIS -->
   <div class="modal" id="member-modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2>Membro</h2>
-        <button class="close-btn" onclick="closeModal('member-modal')">✕</button>
-      </div>
+      <div class="modal-header"><h2>Membro</h2><button class="close-btn" onclick="closeModal('member-modal')">✕</button></div>
       <input type="hidden" id="member-index">
       <div class="form-group"><label>Nick</label><input id="member-nick" class="input"></div>
       <div class="form-group"><label>Level</label><input id="member-level" class="input" type="number"></div>
@@ -489,144 +247,66 @@
   <script>
     const SUPABASE_URL = 'https://axsnlefcbghsaldbvqpv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4c25sZWZjYmdoc2FsZGJ2cXB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzA2OTAsImV4cCI6MjA4NjE0NjY5MH0.Q_BkAvNL_VX02ULpWp0XA1iUQhZwJ-YplZ48j4_Uw7I';
-    let supabase;
-
-    const state = {
-      clan: 1,
-      members: { 1: [], 2: [] },
-      events: { 1: [], 2: [] },
-      deliveries: { 1: [], 2: [] },
-      repoItems: { 1: [], 2: [] }
-    };
+    
+    let supabase = null;
+    const state = { clan: 1, members: {1: [], 2: []}, events: {1: [], 2: []}, deliveries: {1: [], 2: []}, repoItems: {1: [], 2: []} };
 
     function showMessage(msg, type = 'success') {
-      const container = document.getElementById('msgContainer');
-      container.innerHTML = `<div class="${type}">${msg}</div>`;
-      setTimeout(() => { container.innerHTML = ''; }, 3000);
+      const c = document.getElementById('msgContainer');
+      c.innerHTML = `<div class="${type}">${msg}</div>`;
+      setTimeout(() => { c.innerHTML = ''; }, 3000);
     }
 
-    function toISOFromBR(brDate) {
-      if (!brDate) return null;
-      const [d, m, y] = brDate.split('/');
-      return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    function toISOFromBR(d) { if (!d) return null; const [a,b,c] = d.split('/'); return `${c}-${String(b).padStart(2,'0')}-${String(a).padStart(2,'0')}`; }
+    function toBRFromISO(d) { if (!d) return ''; const [a,b,c] = d.split('-'); return `${String(c).padStart(2,'0')}/${String(b).padStart(2,'0')}/${a}`; }
+    function toBRDayMonthFromISO(d) { if (!d) return ''; const da = new Date(d); const di = String(da.getDate()).padStart(2,'0'); const me = String(da.getMonth()+1).padStart(2,'0'); return `${di}/${me}`; }
+    function todayBR() { const n = new Date(); return `${String(n.getDate()).padStart(2,'0')}/${String(n.getMonth()+1).padStart(2,'0')}/${n.getFullYear()}`; }
+
+    function setClan(c) { state.clan = c; document.querySelectorAll('.clan-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.clan) === c)); document.getElementById('clanDisplay').textContent = c; loadAll(); }
+
+    function switchTab(t) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+      document.querySelectorAll('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + t));
+      const ti = {members: {icon:'👥',text:'Membros'}, events: {icon:'📊',text:'Presença'}, deliveries: {icon:'📦',text:'Entregas'}, repo: {icon:'📂',text:'Repositório'}, reports: {icon:'📈',text:'Relatórios'}, settings: {icon:'⚙️',text:'Configurações'}};
+      const in_fo = ti[t] || {icon:'👥',text:'Painel'};
+      document.getElementById('pageTitle').innerHTML = `<span id="pageIcon">${in_fo.icon}</span> ${in_fo.text} do clã`;
     }
 
-    function toBRFromISO(isoDate) {
-      if (!isoDate) return '';
-      const [y, m, d] = isoDate.split('-');
-      return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
-    }
-
-    function toBRDayMonthFromISO(isoDate) {
-      if (!isoDate) return '';
-      const d = new Date(isoDate);
-      const dia = String(d.getDate()).padStart(2,'0');
-      const mes = String(d.getMonth() + 1).padStart(2,'0');
-      return `${dia}/${mes}`;
-    }
-
-    function todayBR() {
-      const now = new Date();
-      return `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
-    }
-
-    function setClan(clan) {
-      state.clan = clan;
-      document.querySelectorAll('.clan-btn').forEach(btn => btn.classList.toggle('active', Number(btn.dataset.clan) === clan));
-      document.getElementById('clanDisplay').textContent = clan;
-      loadAll();
-    }
-
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
-      document.querySelectorAll('.tab').forEach(sec => {
-        const isActive = sec.id === 'tab-' + tab;
-        sec.classList.toggle('active', isActive);
-      });
-      const titles = { members: {icon:'👥',text:'Membros'}, events: {icon:'📊',text:'Presença'}, deliveries: {icon:'📦',text:'Entregas'}, repo: {icon:'📂',text:'Repositório'}, reports: {icon:'📈',text:'Relatórios'}, settings: {icon:'⚙️',text:'Configurações'} };
-      const info = titles[tab] || {icon:'👥',text:'Painel'};
-      document.getElementById('pageTitle').innerHTML = `<span id="pageIcon">${info.icon}</span> ${info.text} do clã`;
-    }
-
-    function toggleTheme() {
-      const current = document.body.dataset.theme || 'light';
-      const next = current === 'light' ? 'dark' : 'light';
-      document.body.dataset.theme = next;
-      document.body.style.background = next === 'dark' ? '#0f172a' : '#f1f5f9';
-    }
-
+    function toggleTheme() { const cu = document.body.dataset.theme || 'light'; const ne = cu === 'light' ? 'dark' : 'light'; document.body.dataset.theme = ne; document.body.style.background = ne === 'dark' ? '#0f172a' : '#f1f5f9'; }
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-    async function initSupabase() {
-      if (!window.supabase) { showMessage('❌ Supabase não carregou', 'error'); return; }
+    async function initDB() {
+      if (!window.supabase) { setTimeout(initDB, 100); return; }
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       loadAll();
     }
 
-    async function loadAll() {
-      if (!supabase) return;
-      loadMembers();
-      loadEvents();
-      loadDeliveries();
-      loadRepo();
-    }
-
-    async function loadMembers() {
-      const { data } = await supabase.from('members').select('*').eq('clan', state.clan).order('nick');
-      state.members[state.clan] = data || [];
-      renderMembers();
-    }
-
-    async function loadEvents() {
-      const { data } = await supabase.from('events').select('*').eq('clan', state.clan).order('data');
-      state.events[state.clan] = data || [];
-      renderEvents();
-    }
-
-    async function loadDeliveries() {
-      const { data } = await supabase.from('deliveries').select('*').eq('clan', state.clan).order('data');
-      state.deliveries[state.clan] = data || [];
-      renderDeliveries();
-    }
-
-    async function loadRepo() {
-      const { data } = await supabase.from('repo_items').select('*').eq('clan', state.clan).order('item');
-      state.repoItems[state.clan] = data || [];
-      renderRepo();
-    }
+    async function loadAll() { if (!supabase) return; await loadMembers(); await loadEvents(); await loadDeliveries(); await loadRepo(); }
+    async function loadMembers() { const {data} = await supabase.from('members').select('*').eq('clan', state.clan).order('nick'); state.members[state.clan] = data || []; renderMembers(); }
+    async function loadEvents() { const {data} = await supabase.from('events').select('*').eq('clan', state.clan).order('data'); state.events[state.clan] = data || []; renderEvents(); }
+    async function loadDeliveries() { const {data} = await supabase.from('deliveries').select('*').eq('clan', state.clan).order('data'); state.deliveries[state.clan] = data || []; renderDeliveries(); }
+    async function loadRepo() { const {data} = await supabase.from('repo_items').select('*').eq('clan', state.clan).order('item'); state.repoItems[state.clan] = data || []; renderRepo(); }
 
     function renderMembers() {
-      const body = document.getElementById('members-body');
-      const all = state.members[state.clan] || [];
-      const search = (document.getElementById('searchMembers')?.value || '').toLowerCase();
-      const filterClass = document.getElementById('filterClass')?.value || '';
-      let list = all.map((m, idx) => ({...m, _idx: idx}));
-      if (search) list = list.filter(m => (m.nick || '').toLowerCase().includes(search));
-      if (filterClass) list = list.filter(m => m.classe === filterClass);
-      body.innerHTML = list.map(m => `<tr><td>${m.nick}</td><td>${m.level??''}</td><td>${m.power != null ? Number(m.power).toLocaleString('pt-BR') : ''}</td><td>${m.classe??''}</td><td>${toBRDayMonthFromISO(m.data)}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openMemberModal(${m._idx})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteMember(${m._idx})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
+      const b = document.getElementById('members-body');
+      const al = state.members[state.clan] || [];
+      const se = (document.getElementById('searchMembers')?.value || '').toLowerCase();
+      const fi = document.getElementById('filterClass')?.value || '';
+      let li = al.map((m, i) => ({...m, _i: i}));
+      if (se) li = li.filter(m => (m.nick || '').toLowerCase().includes(se));
+      if (fi) li = li.filter(m => m.classe === fi);
+      b.innerHTML = li.map(m => `<tr><td>${m.nick}</td><td>${m.level??''}</td><td>${m.power != null ? Number(m.power).toLocaleString('pt-BR') : ''}</td><td>${m.classe??''}</td><td>${toBRDayMonthFromISO(m.data)}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openMemberModal(${m._i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteMember(${m._i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
     }
 
-    function fillEventNickOptions() {
-      const select = document.getElementById('event-nick');
-      select.innerHTML = '<option value=""></option>' + (state.members[state.clan] || []).map(m => `<option>${m.nick}</option>`).join('');
-    }
+    function fillEventNickOptions() { const s = document.getElementById('event-nick'); s.innerHTML = '<option></option>' + (state.members[state.clan] || []).map(m => `<option>${m.nick}</option>`).join(''); }
+    function fillDeliveryNickOptions() { const s = document.getElementById('delivery-nick'); s.innerHTML = '<option></option>' + (state.members[state.clan] || []).map(m => `<option>${m.nick}</option>`).join(''); }
+    function fillDeliveryItemOptions() { const l = document.getElementById('delivery-items'); l.innerHTML = (state.repoItems[state.clan] || []).map(r => `<option value="${r.item}"></option>`).join(''); }
 
-    function fillDeliveryNickOptions() {
-      const select = document.getElementById('delivery-nick');
-      select.innerHTML = '<option value=""></option>' + (state.members[state.clan] || []).map(m => `<option>${m.nick}</option>`).join('');
-    }
-
-    function fillDeliveryItemOptions() {
-      const listEl = document.getElementById('delivery-items');
-      const items = (state.repoItems[state.clan] || []);
-      listEl.innerHTML = items.map(r => `<option value="${r.item}"></option>`).join('');
-    }
-
-    function openMemberModal(index = null) {
-      document.getElementById('member-index').value = index !== null ? index : '';
-      if (index !== null && index !== '') {
-        const m = state.members[state.clan][index];
+    function openMemberModal(i = null) {
+      document.getElementById('member-index').value = i !== null ? i : '';
+      if (i !== null && i !== '') {
+        const m = state.members[state.clan][i];
         document.getElementById('member-nick').value = m.nick;
         document.getElementById('member-level').value = m.level || '';
         document.getElementById('member-power').value = m.power != null ? Number(m.power).toLocaleString('pt-BR') : '';
@@ -643,62 +323,62 @@
     }
 
     async function saveMember() {
-      const idx = document.getElementById('member-index').value;
-      const nick = document.getElementById('member-nick').value.trim();
-      if (!nick) { showMessage('❌ Nick obrigatório', 'error'); return; }
-      const levelStr = document.getElementById('member-level').value.trim();
-      const powerStr = document.getElementById('member-power').value.trim();
-      const record = { clan: state.clan, nick, level: levelStr ? parseInt(levelStr) : null, power: powerStr ? parseInt(powerStr.replace(/\./g, '')) : null, classe: document.getElementById('member-class').value, data: toISOFromBR(document.getElementById('member-date').value) };
+      const i = document.getElementById('member-index').value;
+      const n = document.getElementById('member-nick').value.trim();
+      if (!n) { showMessage('❌ Nick obrigatório', 'error'); return; }
+      const le = document.getElementById('member-level').value.trim();
+      const po = document.getElementById('member-power').value.trim();
+      const r = { clan: state.clan, nick: n, level: le ? parseInt(le) : null, power: po ? parseInt(po.replace(/\./g, '')) : null, classe: document.getElementById('member-class').value, data: toISOFromBR(document.getElementById('member-date').value) };
       try {
-        const list = state.members[state.clan] || [];
-        if (idx !== '') {
-          const { data, error } = await supabase.from('members').update(record).eq('id', list[idx].id).select().single();
+        const li = state.members[state.clan] || [];
+        if (i !== '') {
+          const {data, error} = await supabase.from('members').update(r).eq('id', li[i].id).select().single();
           if (error) throw error;
-          list[idx] = data;
+          li[i] = data;
         } else {
-          const { data, error } = await supabase.from('members').insert(record).select().single();
+          const {data, error} = await supabase.from('members').insert(r).select().single();
           if (error) throw error;
-          list.push(data);
+          li.push(data);
         }
-        state.members[state.clan] = list;
+        state.members[state.clan] = li;
         closeModal('member-modal');
         renderMembers();
         fillEventNickOptions();
         fillDeliveryNickOptions();
         showMessage('✅ Membro salvo!', 'success');
-      } catch (err) { showMessage('❌ Erro ao salvar', 'error'); }
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function deleteMember(index) {
-      const item = state.members[state.clan][index];
-      if (!confirm(`Excluir ${item.nick}?`)) return;
+    async function deleteMember(i) {
+      const m = state.members[state.clan][i];
+      if (!confirm(`Excluir ${m.nick}?`)) return;
       try {
-        await supabase.from('members').delete().eq('id', item.id);
-        state.members[state.clan].splice(index, 1);
+        await supabase.from('members').delete().eq('id', m.id);
+        state.members[state.clan].splice(i, 1);
         renderMembers();
         fillEventNickOptions();
         fillDeliveryNickOptions();
         showMessage('✅ Excluído', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
     async function clearAllMembers() {
-      if (!confirm('Apagar TODOS os membros?')) return;
+      if (!confirm('Apagar TODOS?')) return;
       try {
         await supabase.from('members').delete().eq('clan', state.clan);
         state.members[state.clan] = [];
         renderMembers();
         fillEventNickOptions();
         fillDeliveryNickOptions();
-        showMessage('✅ Membros apagados', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+        showMessage('✅ Apagado', 'success');
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    function openEventModal(index = null) {
+    function openEventModal(i = null) {
       fillEventNickOptions();
-      document.getElementById('event-index').value = index != null ? index : '';
-      if (index != null && index !== '') {
-        const e = state.events[state.clan][index];
+      document.getElementById('event-index').value = i != null ? i : '';
+      if (i != null && i !== '') {
+        const e = state.events[state.clan][i];
         document.getElementById('event-date').value = e.data ? toBRFromISO(e.data) : todayBR();
         document.getElementById('event-name').value = e.evento || 'Boss do clã';
         document.getElementById('event-nick').value = e.nick || '';
@@ -715,64 +395,64 @@
     }
 
     async function saveEvent() {
-      const nick = document.getElementById('event-nick').value;
-      if (!nick) { showMessage('❌ Nick obrigatório', 'error'); return; }
-      const idx = document.getElementById('event-index').value;
-      const record = { clan: state.clan, data: toISOFromBR(document.getElementById('event-date').value), evento: document.getElementById('event-name').value, nick, status: document.getElementById('event-status').value, justificativa: document.getElementById('event-just').value };
+      const n = document.getElementById('event-nick').value;
+      if (!n) { showMessage('❌ Nick obrigatório', 'error'); return; }
+      const i = document.getElementById('event-index').value;
+      const r = { clan: state.clan, data: toISOFromBR(document.getElementById('event-date').value), evento: document.getElementById('event-name').value, nick: n, status: document.getElementById('event-status').value, justificativa: document.getElementById('event-just').value };
       try {
-        const list = state.events[state.clan] || [];
-        if (idx !== '') {
-          const { data, error } = await supabase.from('events').update(record).eq('id', list[idx].id).select().single();
+        const li = state.events[state.clan] || [];
+        if (i !== '') {
+          const {data, error} = await supabase.from('events').update(r).eq('id', li[i].id).select().single();
           if (error) throw error;
-          list[idx] = data;
+          li[i] = data;
         } else {
-          const { data, error } = await supabase.from('events').insert(record).select().single();
+          const {data, error} = await supabase.from('events').insert(r).select().single();
           if (error) throw error;
-          list.push(data);
+          li.push(data);
         }
-        state.events[state.clan] = list;
+        state.events[state.clan] = li;
         closeModal('event-modal');
         renderEvents();
-        showMessage('✅ Evento salvo', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+        showMessage('✅ Salvo', 'success');
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function deleteEvent(index) {
+    async function deleteEvent(i) {
       if (!confirm('Excluir?')) return;
       try {
-        await supabase.from('events').delete().eq('id', state.events[state.clan][index].id);
-        state.events[state.clan].splice(index, 1);
+        await supabase.from('events').delete().eq('id', state.events[state.clan][i].id);
+        state.events[state.clan].splice(i, 1);
         renderEvents();
         showMessage('✅ Excluído', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
     async function clearAllEvents() {
-      if (!confirm('Apagar TODOS os eventos?')) return;
+      if (!confirm('Apagar TODOS?')) return;
       try {
         await supabase.from('events').delete().eq('clan', state.clan);
         state.events[state.clan] = [];
         renderEvents();
-        showMessage('✅ Eventos apagados', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+        showMessage('✅ Apagado', 'success');
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
     function renderEvents() {
-      const body = document.getElementById('events-body');
-      let list = [...(state.events[state.clan] || [])];
-      const filterEvent = document.getElementById('filterEvent')?.value || '';
-      const filterStatus = document.getElementById('filterStatus')?.value || '';
-      if (filterEvent) list = list.filter(e => e.evento === filterEvent);
-      if (filterStatus) list = list.filter(e => e.status === filterStatus);
-      body.innerHTML = list.map((e, i) => `<tr><td>${toBRDayMonthFromISO(e.data)}</td><td>${e.nick}</td><td>${e.evento}</td><td>${e.status}</td><td>${e.justificativa||''}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px" onclick="openEventModal(${i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px" onclick="deleteEvent(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
+      const b = document.getElementById('events-body');
+      let li = [...(state.events[state.clan] || [])];
+      const fe = document.getElementById('filterEvent')?.value || '';
+      const fs = document.getElementById('filterStatus')?.value || '';
+      if (fe) li = li.filter(e => e.evento === fe);
+      if (fs) li = li.filter(e => e.status === fs);
+      b.innerHTML = li.map((e, i) => `<tr><td>${toBRDayMonthFromISO(e.data)}</td><td>${e.nick}</td><td>${e.evento}</td><td>${e.status}</td><td>${e.justificativa||''}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px" onclick="openEventModal(${i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px" onclick="deleteEvent(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhum</td></tr>';
     }
 
-    function openDeliveryModal(index = null) {
+    function openDeliveryModal(i = null) {
       fillDeliveryNickOptions();
       fillDeliveryItemOptions();
-      document.getElementById('delivery-index').value = index != null ? index : '';
-      if (index != null && index !== '') {
-        const d = state.deliveries[state.clan][index];
+      document.getElementById('delivery-index').value = i != null ? i : '';
+      if (i != null && i !== '') {
+        const d = state.deliveries[state.clan][i];
         document.getElementById('delivery-date').value = d.data ? toBRFromISO(d.data) : todayBR();
         document.getElementById('delivery-nick').value = d.nick;
         document.getElementById('delivery-class').value = d.classe;
@@ -791,152 +471,107 @@
     }
 
     async function saveDelivery() {
-      const date = document.getElementById('delivery-date').value;
-      const nick = document.getElementById('delivery-nick').value;
-      const desc = document.getElementById('delivery-desc').value.trim();
-      const qtdStr = document.getElementById('delivery-qtd').value;
-      if (!date || !nick || !desc || !qtdStr) { showMessage('❌ Campos obrigatórios', 'error'); return; }
-      const qtd = parseInt(qtdStr);
-      if (isNaN(qtd) || qtd <= 0) { showMessage('❌ Quantidade inválida', 'error'); return; }
-      const idx = document.getElementById('delivery-index').value;
-      const classe = document.getElementById('delivery-class').value;
-      const obs = document.getElementById('delivery-obs').value.trim();
-      const record = { clan: state.clan, data: toISOFromBR(date), nick, classe, descricao: desc, qtd, obs };
+      const da = document.getElementById('delivery-date').value;
+      const ni = document.getElementById('delivery-nick').value;
+      const de = document.getElementById('delivery-desc').value.trim();
+      const qt = document.getElementById('delivery-qtd').value;
+      if (!da || !ni || !de || !qt) { showMessage('❌ Campos obrigatórios', 'error'); return; }
+      const q = parseInt(qt);
+      if (isNaN(q) || q <= 0) { showMessage('❌ Qtd inválida', 'error'); return; }
+      const i = document.getElementById('delivery-index').value;
+      const cl = document.getElementById('delivery-class').value;
+      const ob = document.getElementById('delivery-obs').value.trim();
+      const r = { clan: state.clan, data: toISOFromBR(da), nick: ni, classe: cl, descricao: de, qtd: q, obs: ob };
       try {
-        const list = state.deliveries[state.clan] || [];
-        if (idx !== '') {
-          const { data, error } = await supabase.from('deliveries').update(record).eq('id', list[idx].id).select().single();
+        const li = state.deliveries[state.clan] || [];
+        if (i !== '') {
+          const {data, error} = await supabase.from('deliveries').update(r).eq('id', li[i].id).select().single();
           if (error) throw error;
-          list[idx] = data;
+          li[i] = data;
         } else {
-          const { data, error } = await supabase.from('deliveries').insert(record).select().single();
+          const {data, error} = await supabase.from('deliveries').insert(r).select().single();
           if (error) throw error;
-          list.push(data);
+          li.push(data);
         }
-        state.deliveries[state.clan] = list;
+        state.deliveries[state.clan] = li;
         closeModal('delivery-modal');
         renderDeliveries();
-        showMessage('✅ Entrega salva', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+        showMessage('✅ Salvo', 'success');
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
-    async function deleteDelivery(index) {
+    async function deleteDelivery(i) {
       if (!confirm('Excluir?')) return;
       try {
-        await supabase.from('deliveries').delete().eq('id', state.deliveries[state.clan][index].id);
-        state.deliveries[state.clan].splice(index, 1);
+        await supabase.from('deliveries').delete().eq('id', state.deliveries[state.clan][i].id);
+        state.deliveries[state.clan].splice(i, 1);
         renderDeliveries();
         showMessage('✅ Excluído', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
     function renderDeliveries() {
-      const body = document.getElementById('deliveries-body');
-      let list = [...(state.deliveries[state.clan] || [])];
-      const searchNick = (document.getElementById('searchDeliveriesNick')?.value || '').toLowerCase();
-      const filterClass = document.getElementById('filterDeliveriesClass')?.value || '';
-      if (searchNick) list = list.filter(d => (d.nick || '').toLowerCase().includes(searchNick));
-      if (filterClass) list = list.filter(d => d.classe === filterClass);
-      body.innerHTML = list.map((d, i) => `<tr><td>${toBRDayMonthFromISO(d.data)}</td><td>${d.nick}</td><td>${d.classe}</td><td>${d.descricao}</td><td>${d.qtd||''}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openDeliveryModal(${i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteDelivery(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhuma</td></tr>';
+      const b = document.getElementById('deliveries-body');
+      let li = [...(state.deliveries[state.clan] || [])];
+      const sn = (document.getElementById('searchDeliveriesNick')?.value || '').toLowerCase();
+      const fc = document.getElementById('filterDeliveriesClass')?.value || '';
+      if (sn) li = li.filter(d => (d.nick || '').toLowerCase().includes(sn));
+      if (fc) li = li.filter(d => d.classe === fc);
+      b.innerHTML = li.map((d, i) => `<tr><td>${toBRDayMonthFromISO(d.data)}</td><td>${d.nick}</td><td>${d.classe}</td><td>${d.descricao}</td><td>${d.qtd||''}</td><td><button class="btn btn-secondary" style="padding:3px 8px;font-size:11px;" onclick="openDeliveryModal(${i})">Editar</button><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="deleteDelivery(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="6">Nenhuma</td></tr>';
     }
 
     function showMonthlyReport() {
-      const card = document.getElementById('monthly-report-card');
-      card.style.display = card.style.display === 'none' ? 'block' : 'none';
-      if (card.style.display === 'block') renderMonthlyReport();
-    }
-
-    function renderMonthlyReport() {
-      const monthInput = document.getElementById('reportMonth').value;
-      const body = document.getElementById('monthly-report-body');
-      if (!monthInput) { body.innerHTML = '<tr><td colspan="2">Selecione um mês</td></tr>'; return; }
-      const [year, month] = monthInput.split('-');
-      const deliveries = state.deliveries[state.clan] || [];
-      const filtered = deliveries.filter(d => { if (!d.data) return false; const [y, m] = d.data.split('-'); return y === year && m === month; });
-      const byNick = {};
-      filtered.forEach(d => { if (!byNick[d.nick]) byNick[d.nick] = []; byNick[d.nick].push(d); });
-      const rows = Object.keys(byNick).sort().map(nick => { const resumo = byNick[nick].map(d => `${toBRDayMonthFromISO(d.data)} - ${d.descricao} (x${d.qtd||1})`).join('<br>'); return `<tr><td>${nick}</td><td>${resumo}</td></tr>`; });
-      body.innerHTML = rows.join('') || '<tr><td colspan="2">Nenhuma</td></tr>';
+      const c = document.getElementById('monthly-report-card');
+      c.style.display = c.style.display === 'none' ? 'block' : 'none';
     }
 
     async function addRepoItem() {
-      const item = document.getElementById('repoItem').value.trim();
-      const tipo = document.getElementById('repoType').value.trim();
-      const boss = document.getElementById('repoBoss').value.trim();
-      const qtdStr = document.getElementById('repoQuantity').value.trim();
-      if (!item || !qtdStr) { showMessage('❌ Item e qtd obrigatórios', 'error'); return; }
-      const qtd = parseInt(qtdStr);
-      if (isNaN(qtd) || qtd <= 0) { showMessage('❌ Qtd inválida', 'error'); return; }
+      const it = document.getElementById('repoItem').value.trim();
+      const ti = document.getElementById('repoType').value.trim();
+      const bo = document.getElementById('repoBoss').value.trim();
+      const qt = document.getElementById('repoQuantity').value.trim();
+      if (!it || !qt) { showMessage('❌ Obrigatórios', 'error'); return; }
+      const q = parseInt(qt);
+      if (isNaN(q) || q <= 0) { showMessage('❌ Qtd inválida', 'error'); return; }
       try {
-        const repo = state.repoItems[state.clan] || [];
-        const existing = repo.find(r => r.item.toLowerCase() === item.toLowerCase());
-        if (existing) {
-          const newQtd = (existing.qtd || 0) + qtd;
-          const { data, error } = await supabase.from('repo_items').update({ qtd: newQtd, tipo: tipo || existing.tipo, boss: boss || existing.boss }).eq('id', existing.id).select().single();
+        const re = state.repoItems[state.clan] || [];
+        const ex = re.find(r => r.item.toLowerCase() === it.toLowerCase());
+        if (ex) {
+          const nq = (ex.qtd || 0) + q;
+          const {data, error} = await supabase.from('repo_items').update({ qtd: nq, tipo: ti || ex.tipo, boss: bo || ex.boss }).eq('id', ex.id).select().single();
           if (error) throw error;
-          Object.assign(existing, data);
+          Object.assign(ex, data);
         } else {
-          const { data, error } = await supabase.from('repo_items').insert({ clan: state.clan, item, tipo, boss, qtd }).select().single();
+          const {data, error} = await supabase.from('repo_items').insert({ clan: state.clan, item: it, tipo: ti, boss: bo, qtd: q }).select().single();
           if (error) throw error;
-          repo.push(data);
+          re.push(data);
         }
-        state.repoItems[state.clan] = repo;
+        state.repoItems[state.clan] = re;
         renderRepo();
         fillDeliveryItemOptions();
         document.getElementById('repoItem').value = '';
         document.getElementById('repoType').value = '';
         document.getElementById('repoBoss').value = '';
         document.getElementById('repoQuantity').value = '';
-        showMessage('✅ Item salvo!', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+        showMessage('✅ Salvo!', 'success');
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
     function renderRepo() {
-      const body = document.getElementById('repo-body');
-      const repo = (state.repoItems[state.clan] || []).slice().sort((a, b) => (a.item || '').localeCompare(b.item || ''));
-      body.innerHTML = repo.map((r, i) => `<tr><td>${r.item}</td><td>${r.tipo||''}</td><td>${r.boss||''}</td><td>${r.qtd}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="removeRepoItem(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="5">Nenhum</td></tr>';
+      const b = document.getElementById('repo-body');
+      const re = (state.repoItems[state.clan] || []).slice().sort((a, b) => (a.item || '').localeCompare(b.item || ''));
+      b.innerHTML = re.map((r, i) => `<tr><td>${r.item}</td><td>${r.tipo||''}</td><td>${r.boss||''}</td><td>${r.qtd}</td><td><button class="btn btn-danger" style="padding:3px 8px;font-size:11px;" onclick="removeRepoItem(${i})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="5">Nenhum</td></tr>';
     }
 
-    async function removeRepoItem(index) {
+    async function removeRepoItem(i) {
       if (!confirm('Excluir?')) return;
       try {
-        await supabase.from('repo_items').delete().eq('id', state.repoItems[state.clan][index].id);
-        state.repoItems[state.clan].splice(index, 1);
+        await supabase.from('repo_items').delete().eq('id', state.repoItems[state.clan][i].id);
+        state.repoItems[state.clan].splice(i, 1);
         renderRepo();
         fillDeliveryItemOptions();
         showMessage('✅ Removido!', 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
-    }
-
-    async function parsePastedRepo() {
-      const raw = (document.getElementById('pasteRepoText').value || '').trim();
-      if (!raw) { showMessage('❌ Cole o texto', 'error'); return; }
-      const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
-      if (!lines.length) { showMessage('❌ Sem linhas válidas', 'error'); return; }
-      const repo = [];
-      for (const line of lines) {
-        const matchMain = line.match(/^(.*?)(\d+)(Santuário da União.*)$/);
-        if (!matchMain) continue;
-        const nomeBruto = matchMain[1].trim();
-        const qtd = parseInt(matchMain[2]) || 0;
-        const origemData = matchMain[3].trim();
-        const origemMatch = origemData.match(/^(.*?)(20\d{2}\.\d{2}\.\d{2}.*)$/);
-        const origem = origemMatch ? origemMatch[1].trim() : origemData;
-        if (!nomeBruto || !qtd) continue;
-        const existing = repo.find(r => r.item.toLowerCase() === nomeBruto.toLowerCase() && r.boss === origem);
-        if (existing) { existing.qtd += qtd; } else { repo.push({ item: nomeBruto, tipo: '', boss: origem, qtd }); }
-      }
-      if (!repo.length) { showMessage('❌ Sem itens', 'error'); return; }
-      try {
-        await supabase.from('repo_items').delete().eq('clan', state.clan);
-        const toInsert = repo.map(r => ({ clan: state.clan, ...r }));
-        const { data, error } = await supabase.from('repo_items').insert(toInsert).select();
-        if (error) throw error;
-        state.repoItems[state.clan] = data || [];
-        renderRepo();
-        fillDeliveryItemOptions();
-        showMessage(`✅ ${repo.length} itens carregados!`, 'success');
-      } catch (err) { showMessage('❌ Erro', 'error'); }
+      } catch (e) { showMessage('❌ Erro', 'error'); }
     }
 
     function clickImportJSON() {
@@ -944,17 +579,17 @@
       document.getElementById('json-file-input').click();
     }
 
-    async function handleJSONFile(evt) {
-      const file = evt.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = async (e) => {
+    async function handleJSONFile(e) {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = async (ev) => {
         try {
-          const imported = JSON.parse(e.target.result);
-          if (Array.isArray(imported) && imported[0]?.nick) {
-            const list = imported.map(m => ({ clan: state.clan, nick: m.nick, level: m.level ?? null, power: m.power ?? null, classe: m.classe ?? null, data: m.data ?? null }));
+          const im = JSON.parse(ev.target.result);
+          if (Array.isArray(im) && im[0]?.nick) {
+            const li = im.map(m => ({ clan: state.clan, nick: m.nick, level: m.level ?? null, power: m.power ?? null, classe: m.classe ?? null, data: m.data ?? null }));
             await supabase.from('members').delete().eq('clan', state.clan);
-            const { data, error } = await supabase.from('members').insert(list).select();
+            const {data, error} = await supabase.from('members').insert(li).select();
             if (error) throw error;
             state.members[state.clan] = data || [];
             renderMembers();
@@ -962,24 +597,24 @@
             fillDeliveryNickOptions();
             showMessage(`✅ ${data.length} membros!`, 'success');
           }
-        } catch (err) { showMessage('❌ Erro ao ler arquivo', 'error'); }
+        } catch (er) { showMessage('❌ Erro', 'error'); }
       };
-      reader.readAsText(file);
+      r.readAsText(f);
     }
 
     function exportJSON() {
-      const dataStr = JSON.stringify(state, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+      const d = JSON.stringify(state, null, 2);
+      const b = new Blob([d], { type: 'application/json' });
+      const u = URL.createObjectURL(b);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = u;
       a.download = `murders-clan${state.clan}-${new Date().toISOString().slice(0,10)}.json`;
       a.click();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(u);
       showMessage('✅ Exportado!', 'success');
     }
 
-    document.addEventListener('DOMContentLoaded', initSupabase);
+    initDB();
   </script>
 </body>
 </html>
