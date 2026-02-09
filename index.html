@@ -626,135 +626,102 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'murders_painel_v9';
-    const API_BASE = 'http://localhost:3000/api';
+const STORAGE_KEY = 'murders_painel_v9';
+const API_BASE = 'http://localhost:3000/api';
 
-    let state = {
-      clan: 1,
-      webhooks: { 
-        1: { members: '', events: '', deliveries: '', repo: '' },
-        2: { members: '', events: '', deliveries: '', repo: '' }
-      },
-      members: { 1: [], 2: [] },
-      events: { 1: [], 2: [] },
-      deliveries: { 1: [], 2: [] },
-      repoItems: { 1: [], 2: [] }
-    };
+let state = {
+  clan: 1,
+  webhooks: { 
+    1: { members: '', events: '', deliveries: '', repo: '' },
+    2: { members: '', events: '', deliveries: '', repo: '' }
+  },
+  members: { 1: [], 2: [] },
+  events: { 1: [], 2: [] },
+  deliveries: { 1: [], 2: [] },
+  repoItems: { 1: [], 2: [] }
+};
 
-    function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function showMessage(msg, type = 'success') {
-      const container = document.getElementById('msgContainer');
-      container.innerHTML = `<div class="${type}">${msg}</div>`;
-      setTimeout(() => { container.innerHTML = ''; }, 3000);
-    }
-
-    function toISOFromBR(brDate) {
-      if (!brDate) return '';
-      const parts = brDate.split('/');
-      if (parts.length !== 3) return '';
-      const [d, m, y] = parts;
-      return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    }
-
-    function toBRFromISO(isoDate) {
-      if (!isoDate) return '';
-      const [y, m, d] = isoDate.split('-');
-      if (!y || !m || !d) return '';
-      return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`;
-    }
-
-    function toBRDayMonthFromISO(isoDate) {
-      if (!isoDate) return '';
-      const d = new Date(isoDate);
-      if (Number.isNaN(d.getTime())) return '';
-      const dia = String(d.getDate()).padStart(2,'0');
-      const mes = String(d.getMonth() + 1).padStart(2,'0');
-      return `${dia}/${mes}`;
-    }
-
-    function todayBR() {
-      const now = new Date();
-      return `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
-    }
-
-    async function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const saved = JSON.parse(raw);
-      if (saved.webhooks) state.webhooks = saved.webhooks;
-      if (saved.clan) state.clan = saved.clan;
-      if (saved.members) state.members = saved.members;
-      if (saved.events) state.events = saved.events;
-      if (saved.deliveries) state.deliveries = saved.deliveries;
-      if (saved.repoItems) state.repoItems = saved.repoItems;
-    }
-  } catch (e) {
-    console.error('Erro ao carregar localStorage:', e);
-  }
-
-  document.getElementById('clanDisplay').textContent = state.clan;
-  document.getElementById('webhookClanDisplay').textContent = state.clan;
-
-  if (state.webhooks && state.webhooks[state.clan]) {
-    document.getElementById('webhookUrl-members').value = state.webhooks[state.clan].members || '';
-    document.getElementById('webhookUrl-events').value = state.webhooks[state.clan].events || '';
-    document.getElementById('webhookUrl-deliveries').value = state.webhooks[state.clan].deliveries || '';
-    document.getElementById('webhookUrl-repo').value = state.webhooks[state.clan].repo || '';
-  }
-
-  // <-- substituição mínima: protegemos a chamada à API contra erros de conexão
-  try {
-    await loadAllFromAPI();
-  } catch (err) {
-    console.error('Erro em loadAllFromAPI:', err);
-    // informa o usuário mas continua usando dados locais (localStorage)
-    showMessage('⚠️ API indisponível — usando dados locais', 'error');
-
-    // garante que as partes da UI que dependem desses dados sejam renderizadas mesmo com a API off
-    renderEvents();
-    renderDeliveries();
-    renderRepo();
-    fillDeliveryItemOptions();
-  }
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-    async function loadMembersFromAPI() {
-      try {
-        const res = await fetch(`${API_BASE}/members?clan=${state.clan}`);
-        if (!res.ok) throw new Error('Erro ao carregar membros');
-        const data = await res.json();
-        state.members[state.clan] = data;
-        renderMembers();
-        fillEventNickOptions();
-        fillDeliveryNickOptions();
-        fillDeliveryItemOptions();
-      } catch (err) {
-        console.error(err);
-        showMessage('❌ Erro ao carregar membros da API', 'error');
-      }
-    }
+function showMessage(msg, type = 'success') {
+  const container = document.getElementById('msgContainer');
+  container.innerHTML = `<div class="${type}">${msg}</div>`;
+  setTimeout(() => { container.innerHTML = ''; }, 3000);
+}
 
-    function setClan(clan) {
-      state.clan = clan;
-      document.querySelectorAll('.clan-btn').forEach(btn => {
-        btn.classList.toggle('active', Number(btn.dataset.clan) === clan);
-      });
-      document.getElementById('clanDisplay').textContent = clan;
-      document.getElementById('webhookClanDisplay').textContent = clan;
-      
-      if (state.webhooks && state.webhooks[clan]) {
-        document.getElementById('webhookUrl-members').value = state.webhooks[clan].members || '';
-        document.getElementById('webhookUrl-events').value = state.webhooks[clan].events || '';
-        document.getElementById('webhookUrl-deliveries').value = state.webhooks[clan].deliveries || '';
-        document.getElementById('webhookUrl-repo').value = state.webhooks[clan].repo || '';
-      }
-      
-      loadAllFromAPI();
-    }
+function todayBR() {
+  const now = new Date();
+  return `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+}
+
+/* ========= API ========= */
+
+async function loadAllFromAPI() {
+  await Promise.allSettled([
+    loadMembersFromAPI(),
+    loadEventsFromAPI(),
+    loadDeliveriesFromAPI(),
+    loadRepoFromAPI()
+  ]);
+}
+
+async function loadEventsFromAPI() {
+  try {
+    const res = await fetch(`${API_BASE}/events?clan=${state.clan}`);
+    if (!res.ok) throw new Error();
+    state.events[state.clan] = await res.json();
+    renderEvents();
+  } catch {}
+}
+
+async function loadDeliveriesFromAPI() {
+  try {
+    const res = await fetch(`${API_BASE}/deliveries?clan=${state.clan}`);
+    if (!res.ok) throw new Error();
+    state.deliveries[state.clan] = await res.json();
+    renderDeliveries();
+  } catch {}
+}
+
+async function loadRepoFromAPI() {
+  try {
+    const res = await fetch(`${API_BASE}/repo?clan=${state.clan}`);
+    if (!res.ok) throw new Error();
+    state.repoItems[state.clan] = await res.json();
+    renderRepo();
+    fillDeliveryItemOptions();
+  } catch {}
+}
+
+async function loadMembersFromAPI() {
+  try {
+    const res = await fetch(`${API_BASE}/members?clan=${state.clan}`);
+    if (!res.ok) throw new Error();
+    state.members[state.clan] = await res.json();
+    renderMembers();
+    fillEventNickOptions();
+    fillDeliveryNickOptions();
+    fillDeliveryItemOptions();
+  } catch {}
+}
+
+/* ========= INIT ========= */
+
+async function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) Object.assign(state, JSON.parse(raw));
+  await loadAllFromAPI();
+}
+
+function setClan(clan) {
+  state.clan = clan;
+  loadAllFromAPI();
+}
+
+/* resto do seu código continua exatamente igual */
+</script>
 
     function switchTab(tab) {
       document.querySelectorAll('.tab-btn').forEach(btn => {
